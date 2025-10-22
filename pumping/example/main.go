@@ -13,7 +13,7 @@ import (
 func main() {
 	// 创建配置
 	config := &pumping.Config{
-		ServerAddr:        "localhost:8080",
+		ServerAddr:        "localhost:8355",
 		Timeout:           5 * time.Second,
 		Reconnect:         true,
 		MaxReconnects:     10,
@@ -79,16 +79,6 @@ func main() {
 		} else {
 			fmt.Println("📈 Subscribed to tick data")
 		}
-
-		/*
-			// 订阅K线数据
-			if err := client.SubscribeKline("XAUUSD", "1min"); err != nil {
-				log.Printf("Failed to subscribe to kline: %v", err)
-			} else {
-				fmt.Println("📊 Subscribed to kline data")
-			}
-		*/
-
 	}()
 
 	// 等待中断信号
