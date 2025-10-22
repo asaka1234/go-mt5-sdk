@@ -3,6 +3,7 @@ package pumping
 import (
 	"bufio"
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net"
@@ -11,8 +12,8 @@ import (
 	"time"
 )
 
-// PumpingClient TCP客户端
-type PumpingClient struct {
+// TCPClient TCP客户端
+type TCPClient struct {
 	config         *Config
 	handler        MessageHandler
 	conn           net.Conn
@@ -23,10 +24,14 @@ type PumpingClient struct {
 	reconnectCount int
 	cancel         context.CancelFunc
 	wg             sync.WaitGroup
+
+	// 添加消息队列用于异步发送
+	sendQueue     chan []byte
+	sendQueueSize int
 }
 
-// NewPumpingClient 创建新的TCP客户端
-func NewPumpingClient(config *Config, handler MessageHandler) *PumpingClient {
+// NewTCPClient 创建新的TCP客户端
+func NewTCPClient(config *Config, handler MessageHandler) *TCPClient {
 	if config == nil {
 		config = DefaultConfig()
 	}
@@ -34,14 +39,15 @@ func NewPumpingClient(config *Config, handler MessageHandler) *PumpingClient {
 		handler = &DefaultMessageHandler{}
 	}
 
-	return &PumpingClient{
-		config:  config,
-		handler: handler,
+	return &TCPClient{
+		config:        config,
+		handler:       handler,
+		sendQueueSize: 1000, // 默认发送队列大小
 	}
 }
 
 // Connect 连接到服务器
-func (c *PumpingClient) Connect() error {
+func (c *TCPClient) Connect() error {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
@@ -60,6 +66,9 @@ func (c *PumpingClient) Connect() error {
 	c.isConnected.Store(true)
 	c.reconnectCount = 0
 
+	// 创建发送队列
+	c.sendQueue = make(chan []byte, c.sendQueueSize)
+
 	// 创建上下文用于控制goroutine退出
 	ctx, cancel := context.WithCancel(context.Background())
 	c.cancel = cancel
@@ -74,35 +83,8 @@ func (c *PumpingClient) Connect() error {
 	return nil
 }
 
-// Disconnect 断开连接
-func (c *PumpingClient) Disconnect() error {
-	c.mu.Lock()
-	defer c.mu.Unlock()
-
-	if !c.isConnected.Load() {
-		return nil
-	}
-
-	// 取消所有goroutine
-	if c.cancel != nil {
-		c.cancel()
-	}
-
-	// 关闭连接
-	if c.conn != nil {
-		c.conn.Close()
-	}
-
-	// 等待所有goroutine退出
-	c.wg.Wait()
-
-	c.isConnected.Store(false)
-	c.handler.OnDisconnected()
-	return nil
-}
-
-// Send 发送数据
-func (c *PumpingClient) Send(data []byte) error {
+// Send 发送数据（同步方式）
+func (c *TCPClient) Send(data []byte) error {
 	if !c.isConnected.Load() {
 		return fmt.Errorf("client is not connected")
 	}
@@ -110,16 +92,64 @@ func (c *PumpingClient) Send(data []byte) error {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 
+	if c.writer == nil {
+		return fmt.Errorf("writer is not initialized")
+	}
+
+	// 写入数据
 	if _, err := c.writer.Write(data); err != nil {
 		c.handler.OnError(fmt.Errorf("failed to write data: %w", err))
 		return err
 	}
 
-	return c.writer.Flush()
+	// 刷新缓冲区
+	if err := c.writer.Flush(); err != nil {
+		c.handler.OnError(fmt.Errorf("failed to flush writer: %w", err))
+		return err
+	}
+
+	return nil
+}
+
+// SendAsync 异步发送数据
+func (c *TCPClient) SendAsync(data []byte) error {
+	if !c.isConnected.Load() {
+		return fmt.Errorf("client is not connected")
+	}
+
+	select {
+	case c.sendQueue <- data:
+		return nil
+	default:
+		return fmt.Errorf("send queue is full")
+	}
+}
+
+// SendJSON 发送JSON数据
+func (c *TCPClient) SendJSON(v interface{}) error {
+	data, err := json.Marshal(v)
+	if err != nil {
+		return fmt.Errorf("failed to marshal JSON: %w", err)
+	}
+
+	// 添加换行符作为消息分隔符
+	data = append(data, '\n')
+	return c.Send(data)
+}
+
+// SendJSONAsync 异步发送JSON数据
+func (c *TCPClient) SendJSONAsync(v interface{}) error {
+	data, err := json.Marshal(v)
+	if err != nil {
+		return fmt.Errorf("failed to marshal JSON: %w", err)
+	}
+
+	data = append(data, '\n')
+	return c.SendAsync(data)
 }
 
 // SendWithDelimiter 发送带分隔符的数据
-func (c *PumpingClient) SendWithDelimiter(data []byte, delimiter byte) error {
+func (c *TCPClient) SendWithDelimiter(data []byte, delimiter byte) error {
 	if !c.isConnected.Load() {
 		return fmt.Errorf("client is not connected")
 	}
@@ -140,13 +170,83 @@ func (c *PumpingClient) SendWithDelimiter(data []byte, delimiter byte) error {
 	return c.writer.Flush()
 }
 
-// IsConnected 检查是否连接
-func (c *PumpingClient) IsConnected() bool {
-	return c.isConnected.Load()
+// Subscribe 发送订阅请求
+func (c *TCPClient) Subscribe(subscribeReq interface{}) error {
+	return c.SendJSON(subscribeReq)
 }
 
-// readLoop 读取循环
-func (c *PumpingClient) readLoop(ctx context.Context) {
+// SubscribeWithType 使用类型发送订阅请求
+func (c *TCPClient) SubscribeWithType(msgType RequestType, data interface{}) error {
+	subscribeReq := map[string]interface{}{
+		"type": msgType,
+		"data": data,
+	}
+	return c.SendJSON(subscribeReq)
+}
+
+// Unsubscribe 发送取消订阅请求
+func (c *TCPClient) Unsubscribe(unsubscribeReq interface{}) error {
+	return c.SendJSON(unsubscribeReq)
+}
+
+// UnsubscribeWithType 使用类型发送取消订阅请求
+func (c *TCPClient) UnsubscribeWithType(msgType RequestType, data interface{}) error {
+	unsubscribeReq := map[string]interface{}{
+		"type": msgType,
+		"data": data,
+	}
+	return c.SendJSON(unsubscribeReq)
+}
+
+// writeLoop 写入循环（处理异步发送）
+func (c *TCPClient) writeLoop(ctx context.Context) {
+	defer c.wg.Done()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case data := <-c.sendQueue:
+			if err := c.Send(data); err != nil {
+				c.handler.OnError(fmt.Errorf("async send failed: %w", err))
+			}
+		}
+	}
+}
+
+// 其他方法保持不变...
+func (c *TCPClient) Disconnect() error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	if !c.isConnected.Load() {
+		return nil
+	}
+
+	// 取消所有goroutine
+	if c.cancel != nil {
+		c.cancel()
+	}
+
+	// 关闭发送队列
+	if c.sendQueue != nil {
+		close(c.sendQueue)
+	}
+
+	// 关闭连接
+	if c.conn != nil {
+		c.conn.Close()
+	}
+
+	// 等待所有goroutine退出
+	c.wg.Wait()
+
+	c.isConnected.Store(false)
+	c.handler.OnDisconnected()
+	return nil
+}
+
+func (c *TCPClient) readLoop(ctx context.Context) {
 	defer c.wg.Done()
 
 	for {
@@ -176,16 +276,7 @@ func (c *PumpingClient) readLoop(ctx context.Context) {
 	}
 }
 
-// writeLoop 写入循环（可用于处理写入队列）
-func (c *PumpingClient) writeLoop(ctx context.Context) {
-	defer c.wg.Done()
-
-	// 这里可以实现消息队列等高级功能
-	<-ctx.Done()
-}
-
-// heartbeatLoop 心跳循环
-func (c *PumpingClient) heartbeatLoop(ctx context.Context) {
+func (c *TCPClient) heartbeatLoop(ctx context.Context) {
 	defer c.wg.Done()
 
 	if c.config.HeartbeatInterval <= 0 {
@@ -201,9 +292,12 @@ func (c *PumpingClient) heartbeatLoop(ctx context.Context) {
 			return
 		case <-ticker.C:
 			if c.isConnected.Load() {
-				// 发送心跳包，这里可以根据协议自定义
-				heartbeat := []byte("PING\n")
-				if err := c.Send(heartbeat); err != nil {
+				// 发送心跳包
+				heartbeat := map[string]string{
+					"type": "heartbeat",
+					"time": time.Now().Format(time.RFC3339),
+				}
+				if err := c.SendJSON(heartbeat); err != nil {
 					c.handler.OnError(fmt.Errorf("failed to send heartbeat: %w", err))
 				}
 			}
@@ -211,8 +305,7 @@ func (c *PumpingClient) heartbeatLoop(ctx context.Context) {
 	}
 }
 
-// handleDisconnect 处理连接断开
-func (c *PumpingClient) handleDisconnect() {
+func (c *TCPClient) handleDisconnect() {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
@@ -236,4 +329,14 @@ func (c *PumpingClient) handleDisconnect() {
 			}
 		})
 	}
+}
+
+// IsConnected 检查是否连接
+func (c *TCPClient) IsConnected() bool {
+	return c.isConnected.Load()
+}
+
+// SetSendQueueSize 设置发送队列大小
+func (c *TCPClient) SetSendQueueSize(size int) {
+	c.sendQueueSize = size
 }

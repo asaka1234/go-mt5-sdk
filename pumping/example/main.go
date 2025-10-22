@@ -5,31 +5,11 @@ import (
 	"log"
 	"os"
 	"os/signal"
-	"safexapp.com/tradfi/go-mt5-sdk/pumping"
 	"syscall"
 	"time"
+
+	"safexapp.com/tradfi/go-mt5-sdk/pumping"
 )
-
-// CustomHandler 自定义消息处理器
-type CustomHandler struct {
-	pumping.DefaultMessageHandler
-}
-
-func (h *CustomHandler) OnMessage(data []byte) {
-	fmt.Printf("Received: %s", string(data))
-}
-
-func (h *CustomHandler) OnConnected() {
-	fmt.Println("Connected to server!")
-}
-
-func (h *CustomHandler) OnDisconnected() {
-	fmt.Println("Disconnected from server!")
-}
-
-func (h *CustomHandler) OnError(err error) {
-	fmt.Printf("Error: %v\n", err)
-}
 
 func main() {
 	// 创建配置
@@ -43,24 +23,58 @@ func main() {
 		BufferSize:        1024,
 	}
 
+	// 创建支持订阅的消息处理器
+	handler := pumping.NewSubscriptionMessageHandler()
+
+	// 设置连接事件回调
+	handler.OnConnectedFunc = func() {
+		fmt.Println("✅ Connected to server!")
+	}
+
+	handler.OnDisconnectedFunc = func() {
+		fmt.Println("❌ Disconnected from server!")
+	}
+
+	handler.OnErrorFunc = func(err error) {
+		fmt.Printf("⚠️ Error: %v\n", err)
+	}
+
+	// 注册tick消息处理器
+	handler.RegisterHandlerWithUnmarshal(pumping.RequestTypeTick, &pumping.TCPRequest{}, func(msg interface{}) error {
+		//todo 处理函数实现
+		return nil
+	})
+
+	// 设置默认处理器
+	handler.SetDefaultHandler(pumping.SubscriptionHandlerFunc(func(data []byte) error {
+		//todo 处理函数实现
+		return nil
+	}))
+
 	// 创建客户端
-	handler := &CustomHandler{}
-	client := pumping.NewPumpingClient(config, handler)
+	client := pumping.NewTCPClient(config, handler)
 
 	// 连接服务器
 	if err := client.Connect(); err != nil {
 		log.Fatalf("Failed to connect: %v", err)
 	}
 
-	// 发送测试消息
+	// 等待连接建立后发送订阅请求
 	go func() {
-		time.Sleep(2 * time.Second)
-		for i := 0; i < 5; i++ {
-			msg := fmt.Sprintf("Hello, Server! %d\n", i)
-			if err := client.Send([]byte(msg)); err != nil {
-				log.Printf("Failed to send message: %v", err)
-			}
-			time.Sleep(1 * time.Second)
+		time.Sleep(1 * time.Second)
+
+		// 订阅tick数据
+		tickReq := pumping.TCPRequest{
+			Type: string(pumping.RequestTypeTick),
+			Params: pumping.TCPParams{
+				Symbols: "XAUUSD",
+			},
+		}
+
+		if err := client.Subscribe(tickReq); err != nil {
+			log.Printf("Failed to subscribe to stock: %v", err)
+		} else {
+			fmt.Println("📈 Subscribed to stock data")
 		}
 	}()
 
