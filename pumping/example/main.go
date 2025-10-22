@@ -5,10 +5,9 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"safexapp.com/tradfi/go-mt5-sdk/pumping"
 	"syscall"
 	"time"
-
-	"safexapp.com/tradfi/go-mt5-sdk/pumping"
 )
 
 func main() {
@@ -25,31 +24,42 @@ func main() {
 
 	// 创建支持订阅的消息处理器
 	handler := pumping.NewSubscriptionMessageHandler()
-
 	// 设置连接事件回调
 	handler.OnConnectedFunc = func() {
 		fmt.Println("✅ Connected to server!")
 	}
-
 	handler.OnDisconnectedFunc = func() {
 		fmt.Println("❌ Disconnected from server!")
 	}
-
 	handler.OnErrorFunc = func(err error) {
 		fmt.Printf("⚠️ Error: %v\n", err)
 	}
 
-	// 注册tick消息处理器
-	handler.RegisterHandlerWithUnmarshal(pumping.RequestTypeTick, &pumping.TCPRequest{}, func(msg interface{}) error {
-		//todo 处理函数实现
+	// 注册tick消息处理器 - 使用类型化处理器
+	handler.RegisterTypedHandler(pumping.RequestTypeTick, []pumping.TickPayloadItem{},
+		func(response *pumping.TCPResponse, payload interface{}) error {
+			tickItems := payload.([]pumping.TickPayloadItem)
+
+			for i, item := range tickItems {
+				tickTime := time.Unix(item.Time, 0)
+
+				fmt.Printf("  [%d] %s - Ask: %s, Bid: %s, Time: %s\n",
+					i+1,
+					item.Symbol,
+					item.Ask,
+					item.Bid,
+					tickTime.Format("15:04:05"))
+			}
+			return nil
+		})
+
+	// 设置默认处理器
+	handler.SetDefaultHandler(func(response *pumping.TCPResponse) error {
+		//todo 实现默认处理器
 		return nil
 	})
 
-	// 设置默认处理器
-	handler.SetDefaultHandler(pumping.SubscriptionHandlerFunc(func(data []byte) error {
-		//todo 处理函数实现
-		return nil
-	}))
+	//-------------------------------------------------------------------
 
 	// 创建客户端
 	client := pumping.NewTCPClient(config, handler)
@@ -59,23 +69,26 @@ func main() {
 		log.Fatalf("Failed to connect: %v", err)
 	}
 
-	// 等待连接建立后发送订阅请求
+	// 等待连接建立后发送请求
 	go func() {
 		time.Sleep(1 * time.Second)
 
 		// 订阅tick数据
-		tickReq := pumping.TCPRequest{
-			Type: string(pumping.RequestTypeTick),
-			Params: pumping.TCPParams{
-				Symbols: "XAUUSD",
-			},
+		if err := client.SubscribeTick("XAUUSD,XAGUSD,EURUSD"); err != nil {
+			log.Printf("Failed to subscribe to tick: %v", err)
+		} else {
+			fmt.Println("📈 Subscribed to tick data")
 		}
 
-		if err := client.Subscribe(tickReq); err != nil {
-			log.Printf("Failed to subscribe to stock: %v", err)
-		} else {
-			fmt.Println("📈 Subscribed to stock data")
-		}
+		/*
+			// 订阅K线数据
+			if err := client.SubscribeKline("XAUUSD", "1min"); err != nil {
+				log.Printf("Failed to subscribe to kline: %v", err)
+			} else {
+				fmt.Println("📊 Subscribed to kline data")
+			}
+		*/
+
 	}()
 
 	// 等待中断信号

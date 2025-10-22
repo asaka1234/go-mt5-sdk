@@ -171,31 +171,45 @@ func (c *TCPClient) SendWithDelimiter(data []byte, delimiter byte) error {
 }
 
 // Subscribe 发送订阅请求
-func (c *TCPClient) Subscribe(subscribeReq interface{}) error {
-	return c.SendJSON(subscribeReq)
+func (c *TCPClient) Subscribe(request *TCPRequest) error {
+	return c.SendJSON(request)
 }
 
-// SubscribeWithType 使用类型发送订阅请求
-func (c *TCPClient) SubscribeWithType(msgType RequestType, data interface{}) error {
-	subscribeReq := map[string]interface{}{
-		"type": msgType,
-		"data": data,
+// SubscribeTick 订阅tick数据
+func (c *TCPClient) SubscribeTick(symbols string) error {
+	req := &TCPRequest{
+		Type: string(RequestTypeTick),
+		Params: TCPParams{
+			Symbols: symbols,
+		},
 	}
-	return c.SendJSON(subscribeReq)
+	return c.SendJSON(req)
 }
+
+//todo 后续这里持续扩展
+/*
+func (c *TCPClient) SubscribeKline(symbols string, period string) error {
+	req := &TCPRequest{
+		Type: RequestTypeKline,
+		Params: TCPParams{
+			Symbols: symbols,
+			Period:  period,
+		},
+	}
+	return c.SendJSON(req)
+}
+*/
 
 // Unsubscribe 发送取消订阅请求
-func (c *TCPClient) Unsubscribe(unsubscribeReq interface{}) error {
-	return c.SendJSON(unsubscribeReq)
-}
-
-// UnsubscribeWithType 使用类型发送取消订阅请求
-func (c *TCPClient) UnsubscribeWithType(msgType RequestType, data interface{}) error {
-	unsubscribeReq := map[string]interface{}{
-		"type": msgType,
-		"data": data,
+func (c *TCPClient) Unsubscribe(requestType RequestType) error {
+	// 根据实际协议实现取消订阅逻辑
+	req := &TCPRequest{
+		Type: string(requestType),
+		Params: TCPParams{
+			// 取消订阅可能需要特定的参数
+		},
 	}
-	return c.SendJSON(unsubscribeReq)
+	return c.SendJSON(req)
 }
 
 // writeLoop 写入循环（处理异步发送）

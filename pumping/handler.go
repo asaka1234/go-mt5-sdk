@@ -61,27 +61,29 @@ func (h *SubscriptionMessageHandler) OnMessage(data []byte) {
 	}
 }
 
-// RegisterHandler 注册消息处理器
-func (h *SubscriptionMessageHandler) RegisterHandler(msgType RequestType, handler SubscriptionHandler, messagePtr interface{}) {
-	h.subscriptionManager.Register(msgType, handler, messagePtr)
+// RegisterHandler 注册基础处理器
+func (h *SubscriptionMessageHandler) RegisterHandler(
+	requestType RequestType,
+	handler func(response *TCPResponse) error,
+) {
+	h.subscriptionManager.RegisterHandler(requestType, handler)
 }
 
-// RegisterHandlerFunc 使用函数注册消息处理器
-func (h *SubscriptionMessageHandler) RegisterHandlerFunc(msgType RequestType, handlerFunc func(data []byte) error, messagePtr interface{}) {
-	h.subscriptionManager.RegisterFunc(msgType, handlerFunc, messagePtr)
-}
-
-// RegisterHandlerWithUnmarshal 注册支持自动反序列化的处理器
-func (h *SubscriptionMessageHandler) RegisterHandlerWithUnmarshal(msgType RequestType, messagePtr interface{}, handlerFunc func(interface{}) error) {
-	h.subscriptionManager.RegisterWithUnmarshal(msgType, messagePtr, handlerFunc)
+// RegisterTypedHandler 注册类型化处理器
+func (h *SubscriptionMessageHandler) RegisterTypedHandler(
+	requestType RequestType,
+	payloadType interface{},
+	handler func(response *TCPResponse, payload interface{}) error,
+) {
+	h.subscriptionManager.RegisterTypedHandler(requestType, payloadType, handler)
 }
 
 // SetDefaultHandler 设置默认处理器
-func (h *SubscriptionMessageHandler) SetDefaultHandler(handler SubscriptionHandler) {
+func (h *SubscriptionMessageHandler) SetDefaultHandler(handler func(response *TCPResponse) error) {
 	h.subscriptionManager.SetDefaultHandler(handler)
 }
 
-// GetSubscriptionManager 获取订阅管理器（用于直接操作）
+// GetSubscriptionManager 获取订阅管理器
 func (h *SubscriptionMessageHandler) GetSubscriptionManager() *SubscriptionManager {
 	return h.subscriptionManager
 }

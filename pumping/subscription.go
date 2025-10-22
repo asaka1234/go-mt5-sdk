@@ -3,81 +3,70 @@ package pumping
 import (
 	"encoding/json"
 	"fmt"
-	"reflect"
 	"sync"
 )
 
-// 基础消息结构，用于解析type字段
-type BaseMessage struct {
-	Type RequestType `json:"type"`
+// ResponseHandler 响应处理器
+type ResponseHandler struct {
+	RequestType RequestType
+	Handler     func(response *TCPResponse) error
 }
 
-// SubscriptionHandler 订阅处理器
-type SubscriptionHandler interface {
-	HandleMessage(data []byte) error
-}
-
-// SubscriptionHandlerFunc 订阅处理器函数类型
-type SubscriptionHandlerFunc func(data []byte) error
-
-func (f SubscriptionHandlerFunc) HandleMessage(data []byte) error {
-	return f(data)
-}
-
-// TypedHandler 带类型的消息处理器
-type TypedHandler struct {
-	MessageType RequestType
-	Handler     SubscriptionHandler
-	MessagePtr  interface{} // 用于JSON反序列化的消息指针
+// TypedResponseHandler 类型化响应处理器
+type TypedResponseHandler struct {
+	RequestType RequestType
+	PayloadType interface{} // payload的类型
+	Handler     func(response *TCPResponse, payload interface{}) error
 }
 
 // SubscriptionManager 订阅管理器
 type SubscriptionManager struct {
 	mu             sync.RWMutex
-	handlers       map[RequestType]*TypedHandler
-	defaultHandler SubscriptionHandler
+	handlers       map[RequestType]ResponseHandler
+	typedHandlers  map[RequestType]TypedResponseHandler
+	defaultHandler func(response *TCPResponse) error
 }
 
 // NewSubscriptionManager 创建订阅管理器
 func NewSubscriptionManager() *SubscriptionManager {
 	return &SubscriptionManager{
-		handlers: make(map[RequestType]*TypedHandler),
+		handlers:      make(map[RequestType]ResponseHandler),
+		typedHandlers: make(map[RequestType]TypedResponseHandler),
 	}
 }
 
-// Register 注册消息处理器
-func (sm *SubscriptionManager) Register(msgType RequestType, handler SubscriptionHandler, messagePtr interface{}) {
+// RegisterHandler 注册基础处理器
+func (sm *SubscriptionManager) RegisterHandler(
+	requestType RequestType,
+	handler func(response *TCPResponse) error,
+) {
 	sm.mu.Lock()
 	defer sm.mu.Unlock()
 
-	sm.handlers[msgType] = &TypedHandler{
-		MessageType: msgType,
+	sm.handlers[requestType] = ResponseHandler{
+		RequestType: requestType,
 		Handler:     handler,
-		MessagePtr:  messagePtr,
 	}
 }
 
-// RegisterFunc 使用函数注册消息处理器
-func (sm *SubscriptionManager) RegisterFunc(msgType RequestType, handlerFunc func(data []byte) error, messagePtr interface{}) {
-	sm.Register(msgType, SubscriptionHandlerFunc(handlerFunc), messagePtr)
-}
+// RegisterTypedHandler 注册类型化处理器
+func (sm *SubscriptionManager) RegisterTypedHandler(
+	requestType RequestType,
+	payloadType interface{},
+	handler func(response *TCPResponse, payload interface{}) error,
+) {
+	sm.mu.Lock()
+	defer sm.mu.Unlock()
 
-// RegisterWithUnmarshal 注册支持自动反序列化的处理器
-func (sm *SubscriptionManager) RegisterWithUnmarshal(msgType RequestType, messagePtr interface{}, handlerFunc func(interface{}) error) {
-	sm.Register(msgType, SubscriptionHandlerFunc(func(data []byte) error {
-		// 创建新的消息实例
-		msg := reflect.New(reflect.TypeOf(messagePtr).Elem()).Interface()
-
-		if err := json.Unmarshal(data, &msg); err != nil {
-			return fmt.Errorf("failed to unmarshal message type %s: %w", msgType, err)
-		}
-
-		return handlerFunc(msg)
-	}), messagePtr)
+	sm.typedHandlers[requestType] = TypedResponseHandler{
+		RequestType: requestType,
+		PayloadType: payloadType,
+		Handler:     handler,
+	}
 }
 
 // SetDefaultHandler 设置默认处理器
-func (sm *SubscriptionManager) SetDefaultHandler(handler SubscriptionHandler) {
+func (sm *SubscriptionManager) SetDefaultHandler(handler func(response *TCPResponse) error) {
 	sm.mu.Lock()
 	defer sm.mu.Unlock()
 	sm.defaultHandler = handler
@@ -85,43 +74,87 @@ func (sm *SubscriptionManager) SetDefaultHandler(handler SubscriptionHandler) {
 
 // HandleMessage 处理消息
 func (sm *SubscriptionManager) HandleMessage(data []byte) error {
-	// 先解析基础消息获取type字段
-	var baseMsg BaseMessage
-	if err := json.Unmarshal(data, &baseMsg); err != nil {
-		return fmt.Errorf("failed to unmarshal base message: %w", err)
+	// 解析基础响应
+	var response TCPResponse
+	if err := json.Unmarshal(data, &response); err != nil {
+		return fmt.Errorf("failed to unmarshal TCP response: %w", err)
+	}
+
+	// 检查状态
+	if response.Status != "ok" {
+		return fmt.Errorf("server returned error status: %s", response.Status)
 	}
 
 	sm.mu.RLock()
 	defer sm.mu.RUnlock()
 
-	// 查找对应的处理器
-	if handler, exists := sm.handlers[baseMsg.Type]; exists {
-		return handler.Handler.HandleMessage(data)
+	// 查找类型化处理器
+	if handler, exists := sm.typedHandlers[RequestType(response.Type)]; exists {
+		return sm.handleTypedResponse(&response, handler)
+	}
+
+	// 查找基础处理器
+	if handler, exists := sm.handlers[RequestType(response.Type)]; exists {
+		return handler.Handler(&response)
 	}
 
 	// 使用默认处理器
 	if sm.defaultHandler != nil {
-		return sm.defaultHandler.HandleMessage(data)
+		return sm.defaultHandler(&response)
 	}
 
-	return fmt.Errorf("no handler registered for message type: %s", baseMsg.Type)
+	return fmt.Errorf("no handler registered for request type: %s", response.Type)
+}
+
+// handleTypedResponse 处理类型化响应
+func (sm *SubscriptionManager) handleTypedResponse(response *TCPResponse, handler TypedResponseHandler) error {
+	// 将payload转换为JSON
+	payloadJSON, err := json.Marshal(response.Payload)
+	if err != nil {
+		return fmt.Errorf("failed to marshal payload: %w", err)
+	}
+
+	// 创建payload类型的新实例
+	var payload interface{}
+	switch handler.PayloadType.(type) {
+	case []TickPayloadItem:
+		var tickPayload []TickPayloadItem
+		if err := json.Unmarshal(payloadJSON, &tickPayload); err != nil {
+			return fmt.Errorf("failed to unmarshal tick payload: %w", err)
+		}
+		payload = tickPayload
+	default:
+		// 通用处理
+		newPayload := handler.PayloadType
+		if err := json.Unmarshal(payloadJSON, &newPayload); err != nil {
+			return fmt.Errorf("failed to unmarshal payload to type: %w", err)
+		}
+		payload = newPayload
+	}
+
+	return handler.Handler(response, payload)
 }
 
 // Unregister 取消注册消息处理器
-func (sm *SubscriptionManager) Unregister(msgType RequestType) {
+func (sm *SubscriptionManager) Unregister(requestType RequestType) {
 	sm.mu.Lock()
 	defer sm.mu.Unlock()
-	delete(sm.handlers, msgType)
+
+	delete(sm.handlers, requestType)
+	delete(sm.typedHandlers, requestType)
 }
 
-// GetRegisteredTypes 获取已注册的消息类型
+// GetRegisteredTypes 获取已注册的请求类型
 func (sm *SubscriptionManager) GetRegisteredTypes() []RequestType {
 	sm.mu.RLock()
 	defer sm.mu.RUnlock()
 
-	types := make([]RequestType, 0, len(sm.handlers))
-	for msgType := range sm.handlers {
-		types = append(types, msgType)
+	types := make([]RequestType, 0)
+	for requestType := range sm.handlers {
+		types = append(types, requestType)
+	}
+	for requestType := range sm.typedHandlers {
+		types = append(types, requestType)
 	}
 	return types
 }
