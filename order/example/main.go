@@ -29,10 +29,18 @@ func main() {
 
 	//构造client
 	cli := order.NewClient(vlog, &order.InitParams{OPEN_URL, CLOSE_URL})
-
 	cli.SetDebugModel(true)
-	//发请求
+
+	//---->open-------------
 	resp, err := cli.OpenOrder(GenOpenOrderRequestDemo())
+	if err != nil {
+		fmt.Printf("err:%s\n", err.Error())
+		return
+	}
+	fmt.Printf("resp:%+v\n", resp)
+
+	//---->close-------------
+	resp, err = cli.CloseOrder(GenCloseOrderRequestDemo())
 	if err != nil {
 		fmt.Printf("err:%s\n", err.Error())
 		return
@@ -40,10 +48,18 @@ func main() {
 	fmt.Printf("resp:%+v\n", resp)
 }
 
-func GenOpenOrderRequestDemo() order.OpenRequest {
-	return order.OpenRequest{
-		Amount: 700,
-		Ref1:   "9438239651111", //Unique customer id in your system. 业务系统里的唯一客户id
-		Ref3:   "uname",
+func GenOpenOrderRequestDemo() order.OpenOrderReq {
+	return order.OpenOrderReq{
+		Login:  700,
+		Lots:   0.1,
+		Symbol: "XAUUSD",
+		Type:   0,
+	}
+}
+
+func GenCloseOrderRequestDemo() order.CloseOrderReq {
+	return order.CloseOrderReq{
+		Lots:   0.1,
+		Ticket: 1028028,
 	}
 }

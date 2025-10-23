@@ -8,9 +8,9 @@ import (
 )
 
 // 开仓
-func (cli *Client) OpenOrder(req OpenOrderReq) (*CommonResp, error) {
+func (cli *Client) CloseOrder(req CloseOrderReq) (*CommonResp, error) {
 
-	rawURL := cli.Params.OpenUrl
+	rawURL := cli.Params.CloseUrl
 
 	//返回值会放到这里
 	var result CommonResp
@@ -27,7 +27,7 @@ func (cli *Client) OpenOrder(req OpenOrderReq) (*CommonResp, error) {
 
 	//print log
 	restLog, _ := jsoniter.ConfigCompatibleWithStandardLibrary.Marshal(utils.GetRestyLog(resp))
-	cli.logger.Infof("MT5#PlaceOrder#Open->%+v", string(restLog))
+	cli.logger.Infof("MT5#PlaceOrder#Close->%+v", string(restLog))
 
 	if err != nil {
 		return nil, err
@@ -42,6 +42,6 @@ func (cli *Client) OpenOrder(req OpenOrderReq) (*CommonResp, error) {
 		//反序列化错误会在此捕捉
 		return nil, fmt.Errorf("%v, body:%s", resp.Error(), resp.Body())
 	}
-	
+
 	return &result, err
 }

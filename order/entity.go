@@ -1,5 +1,7 @@
 package order
 
+import "github.com/shopspring/decimal"
+
 type InitParams struct {
 	OpenUrl  string `json:"openUrl" mapstructure:"openUrl" config:"openUrl" yaml:"openUrl"`     //开仓url
 	CloseUrl string `json:"closeUrl" mapstructure:"closeUrl" config:"closeUrl" yaml:"closeUrl"` //平仓url
@@ -8,42 +10,32 @@ type InitParams struct {
 // -----------------------------------
 
 // 开仓请求
-type OpenRequest struct {
-	Amount float64 `json:"amount"` //must 金额(不需要做单位转换) 只是THB泰铢
-	Ref1   string  `json:"ref1"`   //must 放业务自己的orderNo (只能是数字/字母) The ref1 use bank format can’t more than 18 digit
-	//option
-	Ref2 string `json:"ref2"`
-	Ref3 string `json:"ref3"` //放customer name
-	Ref4 string `json:"ref4"` // 这个用来做签名, 是amount/ref1/authkey的一个md5签名的截断值(18位)
+type OpenOrderReq struct {
+	Login   uint64             `json:"login"` //下单人
+	Lots    float64            `json:"lots"`  // lots手数
+	Symbol  string             `json:"symbol"`
+	Type    MtRequestDirection `json:"type"`  // 方向: 0-buy, 1-sell,  方向//2-OP_BUY_LIMIT, 3-OP_SELL_LIMIT, 4-OP_BUY_STOP, 5-OP_SELL_STOP
+	Price   decimal.Decimal    `json:"price"` // 如果type是0/1 则不需要传该参数, 程序自动计算
+	Comment string             `json:"comment,omitempty"`
+	Sl      float64            `json:"sl,omitempty"`
+	Tp      float64            `json:"tp,omitempty"`
 }
 
-type OpenResponse struct {
-	Error    string `json:"error"`     //如果返回错误，则有该字段
-	RespCode int    `json:"resp_code"` //201是正确
-	RespMsg  string `json:"resp_msg"`
-	Data     struct {
-		Method            string  `json:"method"`
-		Channel           string  `json:"channel"`
-		Ref1              string  `json:"ref1"`
-		Ref2              string  `json:"ref2"`
-		Ref3              string  `json:"ref3"`
-		Ref4              string  `json:"ref4"` // 这个用来做签名, 是amount/ref1/authkey的一个md5签名的截断值(18位)
-		Amount            float64 `json:"amount"`
-		Currency          string  `json:"currency"` //THB
-		Location          string  `json:"location"`
-		Device            string  `json:"device"`
-		PartnerCode       string  `json:"partner_code"`
-		CodeType          string  `json:"code_type"` //ThaiQRCode
-		CodeImage         string  `json:"code_image"`
-		CodeURL           string  `json:"code_url"`
-		TransID           string  `json:"trans_id"`
-		WalletCode        string  `json:"wallet_code"`
-		Ref               string  `json:"_ref"`
-		StoreID           string  `json:"store_id"`
-		TerminalID        string  `json:"terminal_id"`
-		MobileNo          string  `json:"mobile_no"`
-		ExpiredDate       string  `json:"expired_date"`
-		CreatedDate       string  `json:"created_date"`
-		CodeImageTemplate string  `json:"code_image_template"`
-	} `json:"data"`
+type CloseOrderReq struct {
+	Lots   float64 `json:"lots,omitempty"`
+	Ticket int     `json:"ticket"` //是要平掉的order/position的id (通过这个可以拿到symbol和login)
+
+	//-----以下非入参----------------------
+	Symbol string             `json:"symbol"`
+	Login  uint64             `json:"login"`
+	Type   MtRequestDirection `json:"type"` //这个是自己填的,并不是参数传递的!!!!    方向: 0-buy, 1-sell, 3-OP_BUY_LIMIT, 4-OP_SELL_LIMIT, 5-OP_BUY_STOP, 6-OP_SELL_STOP
+}
+
+//------------------------------------------------------------------------
+
+type CommonResp struct {
+	Code    int         `json:"code"`           //错误码 0是成功
+	Success bool        `json:"success"`        //是否成功
+	Message string      `json:"message"`        //错误信息
+	Data    interface{} `json:"data,omitempty"` //数据
 }
