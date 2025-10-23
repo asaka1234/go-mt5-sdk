@@ -32,7 +32,7 @@ func main() {
 	cli.SetDebugModel(true)
 
 	//---->open-------------
-	resp, err := cli.OpenOrder(GenOpenOrderRequestDemo())
+	resp, err := cli.OpenPosition(GenOpenPositionRequestDemo())
 	if err != nil {
 		fmt.Printf("err:%s\n", err.Error())
 		return
@@ -40,7 +40,7 @@ func main() {
 	fmt.Printf("resp:%+v\n", resp)
 
 	//---->close-------------
-	resp, err = cli.CloseOrder(GenCloseOrderRequestDemo())
+	resp, err = cli.ClosePosition(GenClosePositionRequestDemo())
 	if err != nil {
 		fmt.Printf("err:%s\n", err.Error())
 		return
@@ -48,8 +48,8 @@ func main() {
 	fmt.Printf("resp:%+v\n", resp)
 }
 
-func GenOpenOrderRequestDemo() order.OpenOrderReq {
-	return order.OpenOrderReq{
+func GenOpenPositionRequestDemo() order.OpenPositionRequest {
+	return order.OpenPositionRequest{
 		Login:  700,
 		Lots:   0.1,
 		Symbol: "XAUUSD",
@@ -57,8 +57,8 @@ func GenOpenOrderRequestDemo() order.OpenOrderReq {
 	}
 }
 
-func GenCloseOrderRequestDemo() order.CloseOrderReq {
-	return order.CloseOrderReq{
+func GenClosePositionRequestDemo() order.ClosePositionRequest {
+	return order.ClosePositionRequest{
 		Lots:   0.1,
 		Ticket: 1028028,
 	}

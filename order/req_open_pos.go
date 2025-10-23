@@ -8,9 +8,9 @@ import (
 )
 
 // 开仓
-func (cli *Client) CloseOrder(req CloseOrderReq) (*CommonResp, error) {
+func (cli *Client) OpenPosition(req OpenPositionRequest) (*CommonResp, error) {
 
-	rawURL := cli.Params.CloseUrl
+	rawURL := cli.Params.OpenUrl
 
 	//返回值会放到这里
 	var result CommonResp
@@ -27,7 +27,7 @@ func (cli *Client) CloseOrder(req CloseOrderReq) (*CommonResp, error) {
 
 	//print log
 	restLog, _ := jsoniter.ConfigCompatibleWithStandardLibrary.Marshal(utils.GetRestyLog(resp))
-	cli.logger.Infof("MT5#PlaceOrder#Close->%+v", string(restLog))
+	cli.logger.Infof("MT5#OpenPosition#Open->%+v", string(restLog))
 
 	if err != nil {
 		return nil, err
