@@ -24,34 +24,36 @@ func (l VLog) Errorf(format string, args ...interface{}) {
 func main() {
 	vlog := VLog{}
 
-	OPEN_URL := "http://127.0.0.1/v1/order/open"
-	CLOSE_URL := "http://127.0.0.1/v1/order/close"
+	OPEN_URL := "http://127.0.0.1:8351/v1/position/open"
+	CLOSE_URL := "http://127.0.0.1:8351/v1/position/close"
 
 	//构造client
 	cli := order.NewClient(vlog, &order.InitParams{OPEN_URL, CLOSE_URL})
 	cli.SetDebugModel(true)
+	/*
+		//---->open-------------
+		resp, err := cli.OpenPosition(GenOpenPositionRequestDemo())
+		if err != nil {
+			fmt.Printf("err:%s\n", err.Error())
+			return
+		}
+		fmt.Printf("resp:%+v\n", resp)
 
-	//---->open-------------
-	resp, err := cli.OpenPosition(GenOpenPositionRequestDemo())
-	if err != nil {
-		fmt.Printf("err:%s\n", err.Error())
-		return
-	}
-	fmt.Printf("resp:%+v\n", resp)
-
+	*/
 	//---->close-------------
-	resp, err = cli.ClosePosition(GenClosePositionRequestDemo())
+	resp, err := cli.ClosePosition(GenClosePositionRequestDemo())
 	if err != nil {
 		fmt.Printf("err:%s\n", err.Error())
 		return
 	}
 	fmt.Printf("resp:%+v\n", resp)
+
 }
 
 func GenOpenPositionRequestDemo() order.OpenPositionRequest {
 	return order.OpenPositionRequest{
-		Login:  700,
-		Lots:   0.1,
+		Login:  88000047,
+		Lots:   0.5,
 		Symbol: "XAUUSD",
 		Type:   0,
 	}
@@ -60,6 +62,6 @@ func GenOpenPositionRequestDemo() order.OpenPositionRequest {
 func GenClosePositionRequestDemo() order.ClosePositionRequest {
 	return order.ClosePositionRequest{
 		Lots:   0.1,
-		Ticket: 1028028,
+		Ticket: 1265,
 	}
 }
