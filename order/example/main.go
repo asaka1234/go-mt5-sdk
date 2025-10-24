@@ -51,7 +51,7 @@ func main() {
 	*/
 
 	//---->close-------------
-	resp, err := cli.PendingOrder(GenPendingOrderRequestDemo())
+	resp, err := cli.PlacePendingOrder(GenPlacePendingOrderRequestDemo())
 	if err != nil {
 		fmt.Printf("err:%s\n", err.Error())
 		return
@@ -76,7 +76,7 @@ func GenClosePositionRequestDemo() order.ClosePositionRequest {
 	}
 }
 
-func GenPendingOrderRequestDemo() order.PlacePendingOrderRequest {
+func GenPlacePendingOrderRequestDemo() order.PlacePendingOrderRequest {
 	return order.PlacePendingOrderRequest{
 		Login:  88000047,
 		Lots:   0.5,

@@ -8,9 +8,9 @@ import (
 )
 
 // 挂单
-func (cli *Client) PendingOrder(req PlacePendingOrderRequest) (*CommonResp, error) {
+func (cli *Client) RemovePendingOrder(req RemovePendingOrderRequest) (*CommonResp, error) {
 
-	rawURL := cli.Params.PendingUrl
+	rawURL := cli.Params.RemovePendingUrl
 
 	//返回值会放到这里
 	var result CommonResp
@@ -27,7 +27,7 @@ func (cli *Client) PendingOrder(req PlacePendingOrderRequest) (*CommonResp, erro
 
 	//print log
 	restLog, _ := jsoniter.ConfigCompatibleWithStandardLibrary.Marshal(utils.GetRestyLog(resp))
-	cli.logger.Infof("MT5#PendingOrder->%+v", string(restLog))
+	cli.logger.Infof("MT5#RemovePendingOrder->%+v", string(restLog))
 
 	if err != nil {
 		return nil, err

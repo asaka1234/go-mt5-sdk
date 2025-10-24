@@ -1,9 +1,13 @@
 package order
 
+import "github.com/shopspring/decimal"
+
 type InitParams struct {
-	OpenUrl    string `json:"openUrl" mapstructure:"openUrl" config:"openUrl" yaml:"openUrl"`             //开仓url
-	CloseUrl   string `json:"closeUrl" mapstructure:"closeUrl" config:"closeUrl" yaml:"closeUrl"`         //平仓url
-	PendingUrl string `json:"pendingUrl" mapstructure:"pendingUrl" config:"pendingUrl" yaml:"pendingUrl"` //挂单url
+	OpenUrl          string `json:"openUrl" mapstructure:"openUrl" config:"openUrl" yaml:"openUrl"`                                     //开仓url
+	CloseUrl         string `json:"closeUrl" mapstructure:"closeUrl" config:"closeUrl" yaml:"closeUrl"`                                 //平仓url
+	PlacePendingUrl  string `json:"placePendingUrl" mapstructure:"placePendingUrl" config:"placePendingUrl" yaml:"placePendingUrl"`     //挂单url
+	ModifyPendingUrl string `json:"modifyPendingUrl" mapstructure:"modifyPendingUrl" config:"modifyPendingUrl" yaml:"modifyPendingUrl"` //挂单url
+	RemovePendingUrl string `json:"removePendingUrl" mapstructure:"removePendingUrl" config:"removePendingUrl" yaml:"removePendingUrl"` //挂单url
 }
 
 // -----------------------------------
@@ -49,6 +53,35 @@ type PlacePendingOrderRequest struct {
 	Comment string  `json:"comment,omitempty"`
 	Sl      float64 `json:"sl,omitempty"`
 	Tp      float64 `json:"tp,omitempty"`
+}
+
+// 修改挂单
+// type类型、volume 和 symbol等禁止修改. 只能修改price、time和comment
+type ModifyPendingOrderRequest struct {
+	//required
+	Ticket int `json:"ticket"` //是要修改的 order 的id, 通过它可以拿到: symbol, login, type,
+
+	//option
+	Price        decimal.Decimal `json:"price"`         // 新的价格 (不改就还是以前的价格)
+	TriggerPrice float64         `json:"trigger_price"` // new - 只有6/7生效.  只有 Set the price, at which a Limit order is placed when the Stop Limit order triggers.
+	Sl           float64         `json:"sl,omitempty"`
+	Tp           float64         `json:"tp,omitempty"`
+
+	ExpireTimeType MtOrderTime `json:"expire_time_type"` // 不传默认gtc
+	ExpireTime     int64       `json:"expire_time"`      //到期时间,unix时间戳,传0则是不限制,
+
+	//option
+	Comment string `json:"comment,omitempty"` //该modify操作的备注
+}
+
+// 关掉挂单
+// type类型、volume 和 symbol等禁止修改. 只能修改price、time和comment
+type RemovePendingOrderRequest struct {
+	//required
+	Ticket int `json:"ticket"` //是要删掉的 order 的id, 通过它可以拿到: symbol, login, type等信息
+
+	//option
+	Comment string `json:"comment,omitempty"` //该modify操作的备注
 }
 
 //------------------------------------------------------------------------
