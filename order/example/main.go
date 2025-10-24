@@ -26,22 +26,32 @@ func main() {
 
 	OPEN_URL := "http://127.0.0.1:8351/v1/position/open"
 	CLOSE_URL := "http://127.0.0.1:8351/v1/position/close"
+	PENDING_URL := "http://127.0.0.1:8351/v1/pending/order"
 
 	//构造client
-	cli := order.NewClient(vlog, &order.InitParams{OPEN_URL, CLOSE_URL})
+	cli := order.NewClient(vlog, &order.InitParams{OPEN_URL, CLOSE_URL, PENDING_URL})
 	cli.SetDebugModel(true)
 	/*
-		//---->open-------------
-		resp, err := cli.OpenPosition(GenOpenPositionRequestDemo())
+			//---->open-------------
+			resp, err := cli.OpenPosition(GenOpenPositionRequestDemo())
+			if err != nil {
+				fmt.Printf("err:%s\n", err.Error())
+				return
+			}
+			fmt.Printf("resp:%+v\n", resp)
+
+
+		//---->close-------------
+		resp, err := cli.ClosePosition(GenClosePositionRequestDemo())
 		if err != nil {
 			fmt.Printf("err:%s\n", err.Error())
 			return
 		}
 		fmt.Printf("resp:%+v\n", resp)
-
 	*/
+
 	//---->close-------------
-	resp, err := cli.ClosePosition(GenClosePositionRequestDemo())
+	resp, err := cli.PendingOrder(GenPendingOrderRequestDemo())
 	if err != nil {
 		fmt.Printf("err:%s\n", err.Error())
 		return
@@ -63,5 +73,15 @@ func GenClosePositionRequestDemo() order.ClosePositionRequest {
 	return order.ClosePositionRequest{
 		Lots:   0.1,
 		Ticket: 1265,
+	}
+}
+
+func GenPendingOrderRequestDemo() order.PlacePendingOrderRequest {
+	return order.PlacePendingOrderRequest{
+		Login:  88000047,
+		Lots:   0.5,
+		Symbol: "XAUUSD",
+		Type:   2, // buy limit
+		Price:  4000.00,
 	}
 }
