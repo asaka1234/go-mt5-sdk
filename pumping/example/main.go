@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
-	"safexapp.com/tradfi/go-mt5-sdk/pumping"
+	"safexinternal.com/tradfi/go-mt5-sdk/pumping"
 	"syscall"
 	"time"
 )

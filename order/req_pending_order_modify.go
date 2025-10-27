@@ -4,7 +4,7 @@ import (
 	"crypto/tls"
 	"fmt"
 	"github.com/json-iterator/go"
-	"safexapp.com/tradfi/go-mt5-sdk/utils"
+	"safexinternal.com/tradfi/go-mt5-sdk/utils"
 )
 
 // 挂单
