@@ -1,8 +1,8 @@
 package order
 
 import (
+	"git.safexinternal.com/tradfi/go-mt5-sdk/utils"
 	"github.com/go-resty/resty/v2"
-	"safexinternal.com/tradfi/go-mt5-sdk/utils"
 )
 
 type Client struct {

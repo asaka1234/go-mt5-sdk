@@ -1,4 +1,4 @@
-module safexinternal.com/tradfi/go-mt5-sdk
+module git.safexinternal.com/tradfi/go-mt5-sdk
 
 go 1.24.2
 

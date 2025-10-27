@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
+	"git.safexinternal.com/tradfi/go-mt5-sdk/pumping"
 	"log"
 	"os"
 	"os/signal"
-	"safexinternal.com/tradfi/go-mt5-sdk/pumping"
 	"syscall"
 	"time"
 )
