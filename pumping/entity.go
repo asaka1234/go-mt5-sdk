@@ -40,8 +40,10 @@ type HeartbeatPayloadItem struct {
 }
 
 type TickPayloadItem struct {
-	Symbol string `json:"symbol"`
-	Ask    string `json:"ask"`
-	Bid    string `json:"bid"`
-	Time   int64  `json:"time"` //unix时间戳(秒)
+	Symbol string `json:"symbol"  msgpack:"symbol"`
+	Ask    string `json:"ask" msgpack:"ask"`
+	Bid    string `json:"bid" msgpack:"bid"`
+	Last   string `json:"last" msgpack:"last"`
+	Volume uint64 `json:"volume" msgpack:"volume"`
+	Time   int64  `json:"time" msgpack:"time"` //unix时间戳(ms毫秒)
 }
