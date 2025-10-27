@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"gitlab.safexinternal.com/tradefi/go-mt5-sdk/pumping"
+	"github.com/asaka1234/go-mt5-sdk/pumping"
 	"log"
 	"os"
 	"os/signal"

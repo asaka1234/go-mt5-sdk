@@ -1,4 +1,4 @@
-module gitlab.safexinternal.com/tradefi/go-mt5-sdk
+module github.com/asaka1234/go-mt5-sdk
 
 go 1.24.2
 
