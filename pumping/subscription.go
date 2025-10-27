@@ -8,13 +8,13 @@ import (
 
 // ResponseHandler 响应处理器
 type ResponseHandler struct {
-	RequestType RequestType
+	RequestType REQUEST_TYPE
 	Handler     func(response *TCPResponse) error
 }
 
 // TypedResponseHandler 类型化响应处理器
 type TypedResponseHandler struct {
-	RequestType RequestType
+	RequestType REQUEST_TYPE
 	PayloadType interface{} // payload的类型
 	Handler     func(response *TCPResponse, payload interface{}) error
 }
@@ -22,22 +22,22 @@ type TypedResponseHandler struct {
 // SubscriptionManager 订阅管理器
 type SubscriptionManager struct {
 	mu             sync.RWMutex
-	handlers       map[RequestType]ResponseHandler
-	typedHandlers  map[RequestType]TypedResponseHandler
+	handlers       map[REQUEST_TYPE]ResponseHandler
+	typedHandlers  map[REQUEST_TYPE]TypedResponseHandler
 	defaultHandler func(response *TCPResponse) error
 }
 
 // NewSubscriptionManager 创建订阅管理器
 func NewSubscriptionManager() *SubscriptionManager {
 	return &SubscriptionManager{
-		handlers:      make(map[RequestType]ResponseHandler),
-		typedHandlers: make(map[RequestType]TypedResponseHandler),
+		handlers:      make(map[REQUEST_TYPE]ResponseHandler),
+		typedHandlers: make(map[REQUEST_TYPE]TypedResponseHandler),
 	}
 }
 
 // RegisterHandler 注册基础处理器
 func (sm *SubscriptionManager) RegisterHandler(
-	requestType RequestType,
+	requestType REQUEST_TYPE,
 	handler func(response *TCPResponse) error,
 ) {
 	sm.mu.Lock()
@@ -51,7 +51,7 @@ func (sm *SubscriptionManager) RegisterHandler(
 
 // RegisterTypedHandler 注册类型化处理器
 func (sm *SubscriptionManager) RegisterTypedHandler(
-	requestType RequestType,
+	requestType REQUEST_TYPE,
 	payloadType interface{},
 	handler func(response *TCPResponse, payload interface{}) error,
 ) {
@@ -89,12 +89,12 @@ func (sm *SubscriptionManager) HandleMessage(data []byte) error {
 	defer sm.mu.RUnlock()
 
 	// 查找类型化处理器
-	if handler, exists := sm.typedHandlers[RequestType(response.Type)]; exists {
+	if handler, exists := sm.typedHandlers[REQUEST_TYPE(response.Type)]; exists {
 		return sm.handleTypedResponse(&response, handler)
 	}
 
 	// 查找基础处理器
-	if handler, exists := sm.handlers[RequestType(response.Type)]; exists {
+	if handler, exists := sm.handlers[REQUEST_TYPE(response.Type)]; exists {
 		return handler.Handler(&response)
 	}
 
@@ -117,12 +117,30 @@ func (sm *SubscriptionManager) handleTypedResponse(response *TCPResponse, handle
 	// 创建payload类型的新实例
 	var payload interface{}
 	switch handler.PayloadType.(type) {
-	case []TickPayloadItem:
-		var tickPayload []TickPayloadItem
+	case []MT5Tick:
+		var tickPayload []MT5Tick
 		if err := json.Unmarshal(payloadJSON, &tickPayload); err != nil {
 			return fmt.Errorf("failed to unmarshal tick payload: %w", err)
 		}
 		payload = tickPayload
+	case []Mt5Order:
+		var orderPayload []Mt5Order
+		if err := json.Unmarshal(payloadJSON, &orderPayload); err != nil {
+			return fmt.Errorf("failed to unmarshal order payload: %w", err)
+		}
+		payload = orderPayload
+	case []Mt5Position:
+		var posPayload []Mt5Position
+		if err := json.Unmarshal(payloadJSON, &posPayload); err != nil {
+			return fmt.Errorf("failed to unmarshal pos payload: %w", err)
+		}
+		payload = posPayload
+	case []Mt5Deal:
+		var dealPayload []Mt5Deal
+		if err := json.Unmarshal(payloadJSON, &dealPayload); err != nil {
+			return fmt.Errorf("failed to unmarshal deal payload: %w", err)
+		}
+		payload = dealPayload
 	default:
 		// 通用处理
 		newPayload := handler.PayloadType
@@ -136,7 +154,7 @@ func (sm *SubscriptionManager) handleTypedResponse(response *TCPResponse, handle
 }
 
 // Unregister 取消注册消息处理器
-func (sm *SubscriptionManager) Unregister(requestType RequestType) {
+func (sm *SubscriptionManager) Unregister(requestType REQUEST_TYPE) {
 	sm.mu.Lock()
 	defer sm.mu.Unlock()
 
@@ -145,11 +163,11 @@ func (sm *SubscriptionManager) Unregister(requestType RequestType) {
 }
 
 // GetRegisteredTypes 获取已注册的请求类型
-func (sm *SubscriptionManager) GetRegisteredTypes() []RequestType {
+func (sm *SubscriptionManager) GetRegisteredTypes() []REQUEST_TYPE {
 	sm.mu.RLock()
 	defer sm.mu.RUnlock()
 
-	types := make([]RequestType, 0)
+	types := make([]REQUEST_TYPE, 0)
 	for requestType := range sm.handlers {
 		types = append(types, requestType)
 	}

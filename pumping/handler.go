@@ -63,7 +63,7 @@ func (h *SubscriptionMessageHandler) OnMessage(data []byte) {
 
 // RegisterHandler 注册基础处理器
 func (h *SubscriptionMessageHandler) RegisterHandler(
-	requestType RequestType,
+	requestType REQUEST_TYPE,
 	handler func(response *TCPResponse) error,
 ) {
 	h.subscriptionManager.RegisterHandler(requestType, handler)
@@ -71,7 +71,7 @@ func (h *SubscriptionMessageHandler) RegisterHandler(
 
 // RegisterTypedHandler 注册类型化处理器
 func (h *SubscriptionMessageHandler) RegisterTypedHandler(
-	requestType RequestType,
+	requestType REQUEST_TYPE,
 	payloadType interface{},
 	handler func(response *TCPResponse, payload interface{}) error,
 ) {

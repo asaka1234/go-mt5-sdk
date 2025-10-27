@@ -36,9 +36,9 @@ func main() {
 	}
 
 	// 注册tick消息处理器 - 使用类型化处理器
-	handler.RegisterTypedHandler(pumping.RequestTypeTick, []pumping.TickPayloadItem{},
+	handler.RegisterTypedHandler(pumping.REQUEST_TYPE_TICK, []pumping.MT5Tick{},
 		func(response *pumping.TCPResponse, payload interface{}) error {
-			tickItems := payload.([]pumping.TickPayloadItem)
+			tickItems := payload.([]pumping.MT5Tick)
 
 			for i, item := range tickItems {
 				tickTime := time.Unix(item.Time, 0)
@@ -46,8 +46,8 @@ func main() {
 				fmt.Printf("  [%d] %s - Ask: %s, Bid: %s, Time: %s\n",
 					i+1,
 					item.Symbol,
-					item.Ask,
-					item.Bid,
+					item.AskE8,
+					item.BidE8,
 					tickTime.Format("15:04:05"))
 			}
 			return nil

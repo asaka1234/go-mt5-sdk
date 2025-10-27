@@ -178,7 +178,7 @@ func (c *TCPClient) Subscribe(request *TCPRequest) error {
 // SubscribeTick 订阅tick数据
 func (c *TCPClient) SubscribeTick(symbols string) error {
 	req := &TCPRequest{
-		Type: string(RequestTypeTick),
+		Type: string(REQUEST_TYPE_TICK),
 		Params: TCPParams{
 			Symbols: symbols,
 		},
@@ -186,25 +186,32 @@ func (c *TCPClient) SubscribeTick(symbols string) error {
 	return c.SendJSON(req)
 }
 
-//todo 后续这里持续扩展
-/*
-func (c *TCPClient) SubscribeKline(symbols string, period string) error {
+func (c *TCPClient) SubscribePosition() error {
 	req := &TCPRequest{
-		Type: RequestTypeKline,
-		Params: TCPParams{
-			Symbols: symbols,
-			Period:  period,
-		},
+		Type: string(REQUEST_TYPE_POSITION),
 	}
 	return c.SendJSON(req)
 }
-*/
+
+func (c *TCPClient) SubscribeDeal() error {
+	req := &TCPRequest{
+		Type: string(REQUEST_TYPE_DEAL),
+	}
+	return c.SendJSON(req)
+}
+
+func (c *TCPClient) SubscribeOrder() error {
+	req := &TCPRequest{
+		Type: string(REQUEST_TYPE_ORDER),
+	}
+	return c.SendJSON(req)
+}
 
 // Unsubscribe 发送取消订阅请求
-func (c *TCPClient) Unsubscribe(requestType RequestType) error {
+func (c *TCPClient) Unsubscribe(requestType REQUEST_TYPE) error {
 	// 根据实际协议实现取消订阅逻辑
 	req := &TCPRequest{
-		Type: string(requestType),
+		Type:   string(requestType),
 		Params: TCPParams{
 			// 取消订阅可能需要特定的参数
 		},
