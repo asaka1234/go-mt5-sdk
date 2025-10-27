@@ -141,6 +141,18 @@ func (sm *SubscriptionManager) handleTypedResponse(response *TCPResponse, handle
 			return fmt.Errorf("failed to unmarshal deal payload: %w", err)
 		}
 		payload = dealPayload
+	case []MT5MarginCall:
+		var margincallPayload []MT5MarginCall
+		if err := json.Unmarshal(payloadJSON, &margincallPayload); err != nil {
+			return fmt.Errorf("failed to unmarshal margincall payload: %w", err)
+		}
+		payload = margincallPayload
+	case []MT5StopOut:
+		var soPayload []MT5StopOut
+		if err := json.Unmarshal(payloadJSON, &soPayload); err != nil {
+			return fmt.Errorf("failed to unmarshal so payload: %w", err)
+		}
+		payload = soPayload
 	default:
 		// 通用处理
 		newPayload := handler.PayloadType

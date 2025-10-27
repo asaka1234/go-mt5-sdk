@@ -207,6 +207,20 @@ func (c *TCPClient) SubscribeOrder() error {
 	return c.SendJSON(req)
 }
 
+func (c *TCPClient) SubscribeMarginCall() error {
+	req := &TCPRequest{
+		Type: string(REQUEST_TYPE_MARGINCAL),
+	}
+	return c.SendJSON(req)
+}
+
+func (c *TCPClient) SubscribeStopOut() error {
+	req := &TCPRequest{
+		Type: string(REQUEST_TYPE_STOPOUT),
+	}
+	return c.SendJSON(req)
+}
+
 // Unsubscribe 发送取消订阅请求
 func (c *TCPClient) Unsubscribe(requestType REQUEST_TYPE) error {
 	// 根据实际协议实现取消订阅逻辑

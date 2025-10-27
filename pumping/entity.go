@@ -24,6 +24,21 @@ type TCPResponse struct {
 
 //----------------------------------------------------------------------
 
+type MT5MarginCall struct {
+	Login       uint64  `json:"login"  msgpack:"login"`
+	Equity      float64 `json:"equity"  msgpack:"equity"`           //净值
+	MarginLevel float64 `json:"marginLevel"  msgpack:"marginLevel"` //保证金率
+}
+
+type MT5StopOut struct {
+	Login    uint64  `json:"login"  msgpack:"login"`
+	SOLevel  float64 `json:"soLevel"  msgpack:"soLevel"`
+	SOEquity float64 `json:"soEquity"  msgpack:"soEquity"`
+	SOMargin float64 `json:"soMargin"  msgpack:"soMargin"`
+}
+
+//----------------------------------------------------------------------
+
 type MT5Tick struct {
 	Symbol string `json:"symbol"  msgpack:"symbol"`
 	AskE8  int64  `json:"ask" msgpack:"ask"`   //都是扩大了 10e8倍
