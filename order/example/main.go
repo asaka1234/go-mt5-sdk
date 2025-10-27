@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"git.safexinternal.com/tradfi/go-mt5-sdk/order"
+	"gitlab.safexinternal.com/tradfi/go-mt5-sdk/order"
 )
 
 type VLog struct {

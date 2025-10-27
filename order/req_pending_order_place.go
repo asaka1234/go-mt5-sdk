@@ -3,8 +3,8 @@ package order
 import (
 	"crypto/tls"
 	"fmt"
-	"git.safexinternal.com/tradfi/go-mt5-sdk/utils"
 	"github.com/json-iterator/go"
+	"gitlab.safexinternal.com/tradfi/go-mt5-sdk/utils"
 )
 
 // 挂单
