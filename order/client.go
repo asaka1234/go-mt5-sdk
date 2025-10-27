@@ -2,7 +2,7 @@ package order
 
 import (
 	"github.com/go-resty/resty/v2"
-	"gitlab.safexinternal.com/tradfi/go-mt5-sdk/utils"
+	"gitlab.safexinternal.com/tradefi/go-mt5-sdk/utils"
 )
 
 type Client struct {
