@@ -27,9 +27,11 @@ func main() {
 	OPEN_URL := "http://127.0.0.1:8351/v1/position/open"
 	CLOSE_URL := "http://127.0.0.1:8351/v1/position/close"
 	PENDING_URL := "http://127.0.0.1:8351/v1/pending/order"
+	MODIFY_URL := "http://127.0.0.1:8351/v1/pending/modify"
+	REMOVE_URL := "http://127.0.0.1:8351/v1/pending/remove"
 
 	//构造client
-	cli := order.NewClient(vlog, &order.InitParams{OPEN_URL, CLOSE_URL, PENDING_URL})
+	cli := order.NewClient(vlog, &order.InitParams{OPEN_URL, CLOSE_URL, PENDING_URL, MODIFY_URL, REMOVE_URL})
 	cli.SetDebugModel(true)
 	/*
 			//---->open-------------
