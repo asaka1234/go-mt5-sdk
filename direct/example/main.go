@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/asaka1234/go-mt5-sdk/direct"
-	"github.com/asaka1234/go-mt5-sdk/order"
 )
 
 type VLog struct {
@@ -32,7 +31,10 @@ func main() {
 	cli.SetDebugModel(true)
 
 	//resp, err := cli.ListSymbol()
-	resp, err := cli.TickReview()
+	//resp, err := cli.TickReview()
+
+	req := GenUserCreateReqDemo()
+	_, err := cli.UserCreate(req)
 	if err != nil {
 		fmt.Printf("err:%s\n", err.Error())
 		return
@@ -41,11 +43,9 @@ func main() {
 
 }
 
-func GenOpenPositionRequestDemo() order.OpenPositionRequest {
-	return order.OpenPositionRequest{
-		Login:  88000047,
-		Lots:   0.5,
-		Symbol: "XAUUSD",
-		Type:   0,
+func GenUserCreateReqDemo() direct.UserCreateReq {
+	return direct.UserCreateReq{
+		Uid:      123,
+		Internal: 2,
 	}
 }

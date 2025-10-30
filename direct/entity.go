@@ -85,3 +85,21 @@ type MT5Tick struct {
 	Volume uint64 `json:"volume"`
 	Time   int64  `json:"time"` //unix时间戳(ms毫秒)
 }
+
+//-------------------------------------
+
+type UserCreateReq struct {
+	Uid      int64 `json:"uid,omitempty"`      //yubit的uid,用来设置备注
+	Internal uint  `json:"internal,omitempty"` //看是否是内部测试账户(1是,2否)
+}
+
+type UserCreateResp struct {
+	CommonResp `json:",inline"`
+	Data       []Mt5User `json:"data,omitempty"` //数据
+}
+
+type Mt5User struct {
+	Login        uint64 `json:"login"` //account的login
+	MasterPass   string `json:"master_pass"`
+	InvestorPass string `json:"investor_pass"`
+}
