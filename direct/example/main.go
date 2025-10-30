@@ -31,13 +31,13 @@ func main() {
 	cli := direct.NewClient(vlog, &direct.InitParams{ADDR})
 	cli.SetDebugModel(true)
 
-	//---->symbol list-------------
-	resp, err := cli.ListSymbol()
+	//resp, err := cli.ListSymbol()
+	resp, err := cli.TickReview()
 	if err != nil {
 		fmt.Printf("err:%s\n", err.Error())
 		return
 	}
-	fmt.Printf("resp:%+v\n", resp)
+	//fmt.Printf("resp:%+v\n", resp)
 
 }
 

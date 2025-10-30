@@ -69,3 +69,19 @@ type SessionTrade struct {
 	Wday     uint     `json:"wday"` //Day of the week. The day is specified by a value 0 (Sunday) to 6 (Saturday).
 	Sessions []string `json:"sessions"`
 }
+
+//-------------------------------------
+
+type TickReviewResp struct {
+	CommonResp `json:",inline"`
+	Data       []MT5Tick `json:"data,omitempty"` //数据
+}
+
+type MT5Tick struct {
+	Symbol string `json:"symbol"`
+	AskE8  int64  `json:"ask"`  //都是扩大了 10e8倍
+	BidE8  int64  `json:"bid"`  //都是扩大了 10e8倍
+	LastE8 int64  `json:"last"` //都是扩大了 10e8倍
+	Volume uint64 `json:"volume"`
+	Time   int64  `json:"time"` //unix时间戳(ms毫秒)
+}
