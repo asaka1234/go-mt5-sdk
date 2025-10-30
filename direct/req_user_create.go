@@ -28,7 +28,7 @@ func (cli *Client) UserCreate(req UserCreateReq) (*UserCreateResp, error) {
 
 	//print log
 	restLog, _ := jsoniter.ConfigCompatibleWithStandardLibrary.Marshal(utils.GetRestyLog(resp))
-	cli.logger.Infof("MT5#TickReview#List->%+v", string(restLog))
+	cli.logger.Infof("MT5#UserCreate#User->%+v", string(restLog))
 
 	if err != nil {
 		return nil, err

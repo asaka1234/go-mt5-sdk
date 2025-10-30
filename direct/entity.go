@@ -95,7 +95,7 @@ type UserCreateReq struct {
 
 type UserCreateResp struct {
 	CommonResp `json:",inline"`
-	Data       []Mt5User `json:"data,omitempty"` //数据
+	Data       Mt5User `json:"data,omitempty"` //数据
 }
 
 type Mt5User struct {

@@ -30,11 +30,11 @@ func main() {
 	cli := direct.NewClient(vlog, &direct.InitParams{ADDR})
 	cli.SetDebugModel(true)
 
-	//resp, err := cli.ListSymbol()
+	_, err := cli.ListSymbol()
 	//resp, err := cli.TickReview()
 
-	req := GenUserCreateReqDemo()
-	_, err := cli.UserCreate(req)
+	//req := GenUserCreateReqDemo()
+	//_, err := cli.UserCreate(req)
 	if err != nil {
 		fmt.Printf("err:%s\n", err.Error())
 		return
