@@ -103,3 +103,19 @@ type Mt5User struct {
 	MasterPass   string `json:"master_pass"`
 	InvestorPass string `json:"investor_pass"`
 }
+
+//-------------------------------------
+
+type BalanceOperationReq struct {
+	Login   uint64  `json:"login,omitempty"`   //mt5的login
+	Balance float64 `json:"balance,omitempty"` //上账多少,支持浮点数和负数
+}
+
+type BalanceOperationResp struct {
+	CommonResp `json:",inline"`
+	Data       MtRecharge `json:"data,omitempty"` //数据
+}
+
+type MtRecharge struct {
+	DealId uint64 `json:"deal_id"` //充提的deal id
+}

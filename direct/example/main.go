@@ -30,11 +30,15 @@ func main() {
 	cli := direct.NewClient(vlog, &direct.InitParams{ADDR})
 	cli.SetDebugModel(true)
 
-	_, err := cli.ListSymbol()
+	//_, err := cli.ListSymbol()
 	//resp, err := cli.TickReview()
 
 	//req := GenUserCreateReqDemo()
 	//_, err := cli.UserCreate(req)
+
+	req := GenBalanceOperationReqDemo()
+	_, err := cli.BalanceOperation(req)
+
 	if err != nil {
 		fmt.Printf("err:%s\n", err.Error())
 		return
@@ -47,5 +51,12 @@ func GenUserCreateReqDemo() direct.UserCreateReq {
 	return direct.UserCreateReq{
 		Uid:      123,
 		Internal: 2,
+	}
+}
+
+func GenBalanceOperationReqDemo() direct.BalanceOperationReq {
+	return direct.BalanceOperationReq{
+		Login:   123450051,
+		Balance: -30,
 	}
 }
