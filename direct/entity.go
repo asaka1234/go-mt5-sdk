@@ -36,24 +36,32 @@ type ListSymbolResp struct {
 
 type MT5SymbolBase struct {
 	//-----------base----------------------------
-	Symbol    string `json:"symbol"`
-	Desc      string `json:"desc"`
-	TradeMode uint   `json:"trade_mode"` //交易模式,比如:long_only https://support.metaquotes.net/en/docs/mt5/api/config_symbol/imtconsymbol/imtconsymbol_enum#entrademode
-	Category  string `json:"category"`   //分组(enum)
-
+	Symbol   string `json:"symbol"`
+	Digit    uint   `json:"digit"` //symbol的精度
+	Desc     string `json:"desc"`
+	Category string `json:"category"` //分组(enum)
+	//-----------currency-----------------------
+	CurrencyBase      string `json:"currency_base"`
+	CurrencyBaseDigit uint   `json:"currency_base_digit"`
 	//-----------交易------------------------
-	Digit        uint    `json:"digit"`         //symbol的精度
-	GTCMode      uint    `json:"gtc_mode"`      //直到挂单取消
 	ContractSize float64 `json:"contract_size"` //合约量
+	CalcMode     uint    `json:"calc_mode"`     //利润/swap计算
+	TradeMode    uint    `json:"trade_mode"`    //交易模式,比如:long_only https://support.metaquotes.net/en/docs/mt5/api/config_symbol/imtconsymbol/imtconsymbol_enum#entrademode
+	GTCMode      uint    `json:"gtc_mode"`      //直到挂单取消
 	VolumeMin    float64 `json:"volume_min"`    //最小下单手数
 	VolumeMax    float64 `json:"volume_max"`    //最大下单手数
-	CalcMode     uint    `json:"calc_mode"`     //利润计算
+	VolumeStep   float64 `json:"volume_step"`   //下单步长
 
 	//-----------保证金------------------------
 	MarginInitial      float64 `json:"margin_initial"`       //初始保证金
 	MarginHedged       float64 `json:"margin_hedged"`        //保证金对冲
 	MarginRateCurrency float64 `json:"margin_rate_currency"` //保证金百分比
 	CurrencyMargin     string  `json:"currency_margin"`      //保证金货币
+
+	MarginRateInitBuy  float64 `json:"margin_rate_init_buy"`  //percentage初始保证金比例针对buy方向
+	MarginRateInitSell float64 `json:"margin_rate_init_sell"` //percentage针对sell方向
+	MarginRateMainBuy  float64 `json:"margin_rate_main_buy"`  //percentage维持保证金比例针对buy方向
+	MarginRateMainSell float64 `json:"margin_rate_main_sell"` //percentage针对sell方向
 
 	//-------------利息----------------------
 	SwapMode  uint    `json:"swap_mode"`  //库存费类型
