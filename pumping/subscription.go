@@ -123,14 +123,14 @@ func (sm *SubscriptionManager) handleTypedResponse(response *TCPResponse, handle
 			return fmt.Errorf("failed to unmarshal tick payload: %w", err)
 		}
 		payload = tickPayload
-	case []Mt5Order:
-		var orderPayload []Mt5Order
+	case []MTOrderExtra:
+		var orderPayload []MTOrderExtra
 		if err := json.Unmarshal(payloadJSON, &orderPayload); err != nil {
 			return fmt.Errorf("failed to unmarshal order payload: %w", err)
 		}
 		payload = orderPayload
-	case []Mt5Position:
-		var posPayload []Mt5Position
+	case []MTPositionExtra:
+		var posPayload []MTPositionExtra
 		if err := json.Unmarshal(payloadJSON, &posPayload); err != nil {
 			return fmt.Errorf("failed to unmarshal pos payload: %w", err)
 		}

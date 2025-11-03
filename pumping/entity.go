@@ -50,29 +50,46 @@ type MT5Tick struct {
 
 //-----------------------------------------------------------------------
 
-type Mt5Order struct {
-	OrderId  uint64  `json:"orderId"  msgpack:"orderId"`
-	Symbol   string  `json:"symbol"  msgpack:"symbol"`
-	Login    uint64  `json:"login"  msgpack:"login"`
-	Volume   float64 `json:"volume"  msgpack:"volume"`
-	Direct   int     `json:"direct"  msgpack:"direct"`     //0-buy, 1-sell
-	OpenTime int64   `json:"openTime"  msgpack:"openTime"` //unix时间戳（看是否平仓了）,决策是否在指定时间段内 (一个过滤条件)
-	Price    float64 `json:"price"  msgpack:"price"`
-	Comment  string  `json:"comment"  msgpack:"comment"`
+type MTOrderExtra struct {
+	Operation uint `json:"operation"` //1-add, 2-remove, 3-modify
+	MTOrder   `json:",inline"`
+}
+
+type MTOrder struct {
+	Login  uint64 `json:"login"`
+	Ticket uint64 `json:"ticket"` //order_id
+	Symbol string `json:"symbol"`
+	//State        uint    //1是挂单  ORDER_STATE_PLACED
+	TimeSetup    int64   `json:"time_setup"`    //下单时间
+	Type         uint    `json:"type"`          //0-buy, 1-sell,2-buy limit ,3-sell limit, 4-buy stop, 5-sell stop, 6-buy stop limit, 7-sell stop limit,
+	PriceOrder   float64 `json:"price_order"`   //下单价格 (stop/limit的价格)
+	PriceTrigger float64 `json:"price_trigger"` //触发价格（stop limit 单）
+	PriceSL      float64 `json:"price_sl"`
+	PriceTP      float64 `json:"price_tp"`
+	Volume       float64 `json:"volume"` //lots
 }
 
 //-----------------------------------------------------------------------
 
-type Mt5Position struct {
-	Operation int `json:"operation"` // 1-add, 2-remove, 3-modify
+type MTPositionExtra struct {
+	Operation  uint `json:"operation"` //1-add, 2-remove, 3-modify
+	MTPosition `json:",inline"`
+}
 
-	PositionId uint64  `json:"positionId"  msgpack:"positionId"`
-	Symbol     string  `json:"symbol"  msgpack:"symbol"`
-	Login      uint64  `json:"login"  msgpack:"login"`
-	Volume     float64 `json:"volume"  msgpack:"volume"`
-	Direct     int     `json:"direct"  msgpack:"direct"`     //0-buy, 1-sell
-	OpenTime   int64   `json:"openTime"  msgpack:"openTime"` //unix时间戳（看是否平仓了）,决策是否在指定时间段内 (一个过滤条件)
-	OpenPrice  float64 `json:"openPrice"  msgpack:"openPrice"`
+type MTPosition struct {
+	Login          uint64  `json:"login"`
+	Ticket         uint64  `json:"ticket"` //position_id
+	Symbol         string  `json:"symbol"`
+	Action         uint    `json:"action"`     // 0-buy, 1-sell
+	PriceOpen      float64 `json:"price_open"` //开仓价
+	PriceSL        float64 `json:"price_sl"`
+	PriceTP        float64 `json:"price_tp"`
+	Volume         float64 `json:"volume"` //lots
+	Profit         float64 `json:"profit"`
+	Storage        float64 `json:"storage"`
+	ActivationMode uint    `json:"activation_mode"` //1-sl, 2-tp, 3-so
+	ActivationTime int64   `json:"activation_time"` //unix时间戳(s)
+	TimeCreate     int64   `json:"time_create"`     //unix时间戳(s)
 }
 
 //-----------------------------------------------------------------------
