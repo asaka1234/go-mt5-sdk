@@ -94,17 +94,25 @@ type MTPosition struct {
 
 //-----------------------------------------------------------------------
 
+type Mt5DealExtra struct {
+	Operation uint `json:"operation"` //1-add, 2-remove, 3-modify
+	Mt5Deal   `json:",inline"`
+}
+
 type Mt5Deal struct {
-	DealId     uint64  `json:"dealId"  msgpack:"dealId"`
-	Symbol     string  `json:"symbol"  msgpack:"symbol"`
-	Login      uint64  `json:"login"  msgpack:"login"`
-	Volume     float64 `json:"volume"  msgpack:"volume"`
-	Direct     int     `json:"direct"  msgpack:"direct"` //0-buy, 1-sell
-	Entry      int     `json:"entry"  msgpack:"entry"`   //0-ENTRY_IN 开仓, 1-ENTRY_OUT 平仓
-	Time       int64   `json:"time"  msgpack:"time"`
-	Price      float64 `json:"price"  msgpack:"price"`           //执行价格
-	CloseTime  int64   `json:"closeTime"  msgpack:"closeTime"`   //平仓的话,这里是平仓时间
-	PositionId uint64  `json:"positionId"  msgpack:"positionId"` //平仓单的话,这里就是对应的positionId. 开仓单的话这里为0
+	DealId     uint64  `json:"deal_id"`
+	PositionId uint64  `json:"position_id"`
+	Symbol     string  `json:"symbol"`
+	Login      uint64  `json:"login"`
+	Volume     float64 `json:"volume"`
+	Entry      int     `json:"entry"`  //0-ENTRY_IN 开仓, 1-ENTRY_OUT 平仓
+	Action     int     `json:"action"` //
+	Time       int64   `json:"time"`
+	Price      float64 `json:"price"` //执行价格
+	PriceSL    float64 `json:"price_sl"`
+	PriceTP    float64 `json:"price_tp"`
+	Profit     float64 `json:"profit"`  //profit
+	Storage    float64 `json:"storage"` //swap
 }
 
 //-----------------------------------------------------------------------
