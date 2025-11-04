@@ -99,6 +99,7 @@ type MT5Tick struct {
 type UserCreateReq struct {
 	Uid      int64 `json:"uid,omitempty"`      //yubit的uid,用来设置备注
 	Internal uint  `json:"internal,omitempty"` //看是否是内部测试账户(1是,2否)
+	Leverage uint  `json:"leverage,omitempty"` //杠杆.默认500
 }
 
 type UserCreateResp struct {
