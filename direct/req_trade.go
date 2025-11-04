@@ -10,12 +10,12 @@ import (
 
 // 获取指定login的当前持仓列表
 
-func (cli *Client) ListPosition(login uint64) (*TickReviewResp, error) {
+func (cli *Client) ListPosition(login uint64) (*ListPositionResp, error) {
 
 	rawURL := cli.Params.Address + "/v1/position/list"
 
 	//返回值会放到这里
-	var result TickReviewResp
+	var result ListPositionResp
 
 	resp, err := cli.ryClient.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true}).
 		SetCloseConnection(true).
