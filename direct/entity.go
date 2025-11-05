@@ -178,10 +178,10 @@ type ListPendingOrderResp struct {
 }
 
 type MTOrder struct {
-	Login  uint64 `json:"login"`
-	Ticket uint64 `json:"ticket"` //order_id
-	Symbol string `json:"symbol"`
-	//State        uint    //1是挂单  ORDER_STATE_PLACED
+	Login        uint64  `json:"login"`
+	Ticket       uint64  `json:"ticket"` //order_id
+	Symbol       string  `json:"symbol"`
+	State        uint    `json:"state"`         //1是挂单  ORDER_STATE_PLACED
 	TimeSetup    int64   `json:"time_setup"`    //下单时间
 	Type         uint    `json:"type"`          //0-buy, 1-sell,2-buy limit ,3-sell limit, 4-buy stop, 5-sell stop, 6-buy stop limit, 7-sell stop limit,
 	PriceOrder   float64 `json:"price_order"`   //下单价格 (stop/limit的价格)
@@ -189,4 +189,11 @@ type MTOrder struct {
 	PriceSL      float64 `json:"price_sl"`
 	PriceTP      float64 `json:"price_tp"`
 	Volume       float64 `json:"volume"` //lots
+}
+
+//------------------------------------------------------
+
+type GetOrderResp struct {
+	CommonResp `json:",inline"`
+	Data       MTOrder `json:"data,omitempty"` //数据
 }
