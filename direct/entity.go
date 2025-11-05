@@ -197,3 +197,8 @@ type GetOrderResp struct {
 	CommonResp `json:",inline"`
 	Data       MTOrder `json:"data,omitempty"` //数据
 }
+
+type GetPositionResp struct {
+	CommonResp `json:",inline"`
+	Data       MTPosition `json:"data,omitempty"` //数据
+}
