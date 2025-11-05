@@ -3,11 +3,7 @@ package order
 import "github.com/shopspring/decimal"
 
 type InitParams struct {
-	OpenUrl          string `json:"openUrl" mapstructure:"openUrl" config:"openUrl" yaml:"openUrl"`                                     //开仓url
-	CloseUrl         string `json:"closeUrl" mapstructure:"closeUrl" config:"closeUrl" yaml:"closeUrl"`                                 //平仓url
-	PlacePendingUrl  string `json:"placePendingUrl" mapstructure:"placePendingUrl" config:"placePendingUrl" yaml:"placePendingUrl"`     //挂单url
-	ModifyPendingUrl string `json:"modifyPendingUrl" mapstructure:"modifyPendingUrl" config:"modifyPendingUrl" yaml:"modifyPendingUrl"` //挂单url
-	RemovePendingUrl string `json:"removePendingUrl" mapstructure:"removePendingUrl" config:"removePendingUrl" yaml:"removePendingUrl"` //挂单url
+	Address string `json:"address" mapstructure:"address" config:"address" yaml:"address"` // http://ip:port这样的地址
 }
 
 // -----------------------------------

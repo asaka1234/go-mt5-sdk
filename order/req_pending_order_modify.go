@@ -10,7 +10,7 @@ import (
 // 挂单
 func (cli *Client) ModifyPendingOrder(req ModifyPendingOrderRequest) (*CommonResp, error) {
 
-	rawURL := cli.Params.ModifyPendingUrl
+	rawURL := cli.Params.Address + "/v1/pending/order/modify"
 
 	//返回值会放到这里
 	var result CommonResp

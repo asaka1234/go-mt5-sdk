@@ -10,7 +10,7 @@ import (
 // 开仓
 func (cli *Client) OpenPosition(req OpenPositionRequest) (*CommonResp, error) {
 
-	rawURL := cli.Params.OpenUrl
+	rawURL := cli.Params.Address + "/v1/position/open"
 
 	//返回值会放到这里
 	var result CommonResp

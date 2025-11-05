@@ -10,7 +10,7 @@ import (
 // 开仓
 func (cli *Client) ClosePosition(req ClosePositionRequest) (*CommonResp, error) {
 
-	rawURL := cli.Params.CloseUrl
+	rawURL := cli.Params.Address + "/v1/position/close"
 
 	//返回值会放到这里
 	var result CommonResp

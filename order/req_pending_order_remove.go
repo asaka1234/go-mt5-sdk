@@ -10,8 +10,7 @@ import (
 // 挂单
 func (cli *Client) RemovePendingOrder(req RemovePendingOrderRequest) (*CommonResp, error) {
 
-	rawURL := cli.Params.RemovePendingUrl
-
+	rawURL := cli.Params.Address + "/v1/pending/order/remove"
 	//返回值会放到这里
 	var result CommonResp
 
