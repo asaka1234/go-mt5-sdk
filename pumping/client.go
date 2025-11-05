@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/asaka1234/go-mt5-sdk/utils"
 	"io"
 	"net"
 	"sync"
@@ -289,7 +290,8 @@ func (c *TCPClient) readLoop(ctx context.Context) {
 		case <-ctx.Done():
 			return
 		default:
-			data, err := c.reader.ReadBytes('\n') // 以换行符作为分隔符
+			data, err := utils.DecodeTCPMsgWithLePrefix(c.reader)
+			//data, err := c.reader.ReadBytes('\n') // 以换行符作为分隔符
 			if err != nil {
 				if err == io.EOF {
 					c.handleDisconnect()

@@ -1,8 +1,8 @@
 package pumping
 
 import (
-	"encoding/json"
 	"fmt"
+	jsoniter "github.com/json-iterator/go"
 	"sync"
 )
 
@@ -76,8 +76,9 @@ func (sm *SubscriptionManager) SetDefaultHandler(handler func(response *TCPRespo
 func (sm *SubscriptionManager) HandleMessage(data []byte) error {
 	// 解析基础响应
 	var response TCPResponse
-	if err := json.Unmarshal(data, &response); err != nil {
-		return fmt.Errorf("failed to unmarshal TCP response: %w", err)
+	err := Decode[TCPResponse](data, &response)
+	if err != nil {
+		return err
 	}
 
 	// 检查状态
@@ -109,7 +110,7 @@ func (sm *SubscriptionManager) HandleMessage(data []byte) error {
 // handleTypedResponse 处理类型化响应
 func (sm *SubscriptionManager) handleTypedResponse(response *TCPResponse, handler TypedResponseHandler) error {
 	// 将payload转换为JSON
-	payloadJSON, err := json.Marshal(response.Payload)
+	payloadJSON, err := jsoniter.Marshal(response.Payload)
 	if err != nil {
 		return fmt.Errorf("failed to marshal payload: %w", err)
 	}
@@ -119,44 +120,44 @@ func (sm *SubscriptionManager) handleTypedResponse(response *TCPResponse, handle
 	switch handler.PayloadType.(type) {
 	case []MT5Tick:
 		var tickPayload []MT5Tick
-		if err := json.Unmarshal(payloadJSON, &tickPayload); err != nil {
+		if err := jsoniter.Unmarshal(payloadJSON, &tickPayload); err != nil {
 			return fmt.Errorf("failed to unmarshal tick payload: %w", err)
 		}
 		payload = tickPayload
 	case []MTOrderExtra:
 		var orderPayload []MTOrderExtra
-		if err := json.Unmarshal(payloadJSON, &orderPayload); err != nil {
+		if err := jsoniter.Unmarshal(payloadJSON, &orderPayload); err != nil {
 			return fmt.Errorf("failed to unmarshal order payload: %w", err)
 		}
 		payload = orderPayload
 	case []MTPositionExtra:
 		var posPayload []MTPositionExtra
-		if err := json.Unmarshal(payloadJSON, &posPayload); err != nil {
+		if err := jsoniter.Unmarshal(payloadJSON, &posPayload); err != nil {
 			return fmt.Errorf("failed to unmarshal pos payload: %w", err)
 		}
 		payload = posPayload
 	case []Mt5Deal:
 		var dealPayload []Mt5Deal
-		if err := json.Unmarshal(payloadJSON, &dealPayload); err != nil {
+		if err := jsoniter.Unmarshal(payloadJSON, &dealPayload); err != nil {
 			return fmt.Errorf("failed to unmarshal deal payload: %w", err)
 		}
 		payload = dealPayload
 	case []MT5MarginCall:
 		var margincallPayload []MT5MarginCall
-		if err := json.Unmarshal(payloadJSON, &margincallPayload); err != nil {
+		if err := jsoniter.Unmarshal(payloadJSON, &margincallPayload); err != nil {
 			return fmt.Errorf("failed to unmarshal margincall payload: %w", err)
 		}
 		payload = margincallPayload
 	case []MT5StopOut:
 		var soPayload []MT5StopOut
-		if err := json.Unmarshal(payloadJSON, &soPayload); err != nil {
+		if err := jsoniter.Unmarshal(payloadJSON, &soPayload); err != nil {
 			return fmt.Errorf("failed to unmarshal so payload: %w", err)
 		}
 		payload = soPayload
 	default:
 		// 通用处理
 		newPayload := handler.PayloadType
-		if err := json.Unmarshal(payloadJSON, &newPayload); err != nil {
+		if err := jsoniter.Unmarshal(payloadJSON, &newPayload); err != nil {
 			return fmt.Errorf("failed to unmarshal payload to type: %w", err)
 		}
 		payload = newPayload

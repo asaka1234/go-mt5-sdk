@@ -43,7 +43,7 @@ func main() {
 			for i, item := range tickItems {
 				tickTime := time.Unix(item.Time, 0)
 
-				fmt.Printf("  [%d] %s - Ask: %s, Bid: %s, Time: %s\n",
+				fmt.Printf("  [%d] %s - Ask: %d, Bid: %d, Time: %s\n",
 					i+1,
 					item.Symbol,
 					item.AskE8,
