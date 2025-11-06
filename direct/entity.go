@@ -41,8 +41,12 @@ type MT5SymbolBase struct {
 	Desc     string `json:"desc"`
 	Category string `json:"category"` //分组(enum)
 	//-----------currency-----------------------
-	CurrencyBase      string `json:"currency_base"`
-	CurrencyBaseDigit uint   `json:"currency_base_digit"`
+	CurrencyBase        string `json:"currency_base"`
+	CurrencyBaseDigit   uint   `json:"currency_base_digit"`
+	CurrencyProfit      string `json:"currency_profit"`
+	CurrencyProfitDigit uint   `json:"currency_profit_digit"`
+	CurrencyMargin      string `json:"currency_margin"` //保证金货币
+	CurrencyMarginDigit uint   `json:"currency_margin_digit"`
 	//-----------交易------------------------
 	ContractSize float64 `json:"contract_size"` //合约量
 	CalcMode     uint    `json:"calc_mode"`     //利润/swap计算
@@ -56,7 +60,6 @@ type MT5SymbolBase struct {
 	MarginInitial      float64 `json:"margin_initial"`       //初始保证金
 	MarginHedged       float64 `json:"margin_hedged"`        //保证金对冲
 	MarginRateCurrency float64 `json:"margin_rate_currency"` //保证金百分比
-	CurrencyMargin     string  `json:"currency_margin"`      //保证金货币
 
 	MarginRateInitBuy  float64 `json:"margin_rate_init_buy"`  //percentage初始保证金比例针对buy方向
 	MarginRateInitSell float64 `json:"margin_rate_init_sell"` //percentage针对sell方向
@@ -162,6 +165,8 @@ type MTPosition struct {
 	PriceOpen      float64 `json:"price_open"` //开仓价
 	PriceSL        float64 `json:"price_sl"`
 	PriceTP        float64 `json:"price_tp"`
+	RateMargin     float64 `json:"rate_margin"`
+	RateProfit     float64 `json:"rate_profit"`
 	Volume         float64 `json:"volume"` //lots
 	Profit         float64 `json:"profit"`
 	Storage        float64 `json:"storage"`
@@ -189,6 +194,7 @@ type MTOrder struct {
 	PriceSL      float64 `json:"price_sl"`
 	PriceTP      float64 `json:"price_tp"`
 	Volume       float64 `json:"volume"` //lots
+	RateMargin   float64 `json:"rate_margin"`
 }
 
 //------------------------------------------------------

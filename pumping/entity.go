@@ -67,6 +67,7 @@ type MTOrder struct {
 	PriceSL      float64 `json:"price_sl"  msgpack:"price_sl"`
 	PriceTP      float64 `json:"price_tp"  msgpack:"price_tp"`
 	Volume       float64 `json:"volume"  msgpack:"volume"` //lots
+	RateMargin   float64 `json:"rate_margin"  msgpack:"rate_margin"`
 }
 
 //-----------------------------------------------------------------------
@@ -84,6 +85,8 @@ type MTPosition struct {
 	PriceOpen      float64 `json:"price_open"  msgpack:"price_open"` //开仓价
 	PriceSL        float64 `json:"price_sl"  msgpack:"price_sl"`
 	PriceTP        float64 `json:"price_tp"  msgpack:"price_tp"`
+	RateMargin     float64 `json:"rate_margin"  msgpack:"rate_margin"`
+	RateProfit     float64 `json:"rate_profit"  msgpack:"rate_profit"`
 	Volume         float64 `json:"volume"  msgpack:"volume"` //lots
 	Profit         float64 `json:"profit"  msgpack:"profit"`
 	Storage        float64 `json:"storage"  msgpack:"storage"`
@@ -111,7 +114,9 @@ type Mt5Deal struct {
 	Price      float64 `json:"price"  msgpack:"price"` //执行价格
 	PriceSL    float64 `json:"price_sl"  msgpack:"price_sl"`
 	PriceTP    float64 `json:"price_tp"  msgpack:"price_tp"`
-	Profit     float64 `json:"profit"  msgpack:"profit"`   //profit
+	Profit     float64 `json:"profit"  msgpack:"profit"` //profit
+	RateMargin float64 `json:"rate_margin"  msgpack:"rate_margin"`
+	RateProfit float64 `json:"rate_profit"  msgpack:"rate_profit"`
 	Storage    float64 `json:"storage"  msgpack:"storage"` //swap
 }
 
