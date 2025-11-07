@@ -73,10 +73,11 @@ type MT5SymbolBase struct {
 	Swap3Day  uint    `json:"swap_3_day"` //3日库存费
 
 	//-------------交易时间----------------------
-	SessionTrade []SessionTrade `json:"session_trade"` //每周七天的一个列表
+	SessionTrade []SessionInfo `json:"session_trade"` //每周七天的一个列表
+	SessionQuote []SessionInfo `json:"session_quote"` //每周七天的一个列表
 }
 
-type SessionTrade struct {
+type SessionInfo struct {
 	Wday     uint     `json:"wday"` //Day of the week. The day is specified by a value 0 (Sunday) to 6 (Saturday).
 	Sessions []string `json:"sessions"`
 }
