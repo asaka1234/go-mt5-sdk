@@ -56,10 +56,10 @@ type MTOrderExtra struct {
 }
 
 type MTOrder struct {
-	Login  uint64 `json:"login"  msgpack:"login"`
-	Ticket uint64 `json:"ticket"  msgpack:"ticket"` //order_id
-	Symbol string `json:"symbol"  msgpack:"symbol"`
-	//State        uint    //1是挂单  ORDER_STATE_PLACED
+	Login        uint64  `json:"login"  msgpack:"login"`
+	Ticket       uint64  `json:"ticket"  msgpack:"ticket"` //order_id
+	Symbol       string  `json:"symbol"  msgpack:"symbol"`
+	State        uint    `json:"state"  msgpack:"state"`                 //1是挂单  ORDER_STATE_PLACED, 其他是失败
 	TimeSetup    int64   `json:"time_setup"  msgpack:"time_setup"`       //下单时间
 	Type         uint    `json:"type"  msgpack:"type"`                   //0-buy, 1-sell,2-buy limit ,3-sell limit, 4-buy stop, 5-sell stop, 6-buy stop limit, 7-sell stop limit,
 	PriceOrder   float64 `json:"price_order"  msgpack:"price_order"`     //下单价格 (stop/limit的价格)
@@ -110,6 +110,7 @@ type Mt5Deal struct {
 	Volume     float64 `json:"volume"  msgpack:"volume"`
 	Entry      int     `json:"entry"  msgpack:"entry"`   //0-ENTRY_IN 开仓, 1-ENTRY_OUT 平仓
 	Action     int     `json:"action"  msgpack:"action"` //
+	Reason     uint    `json:"reason"  msgpack:"reason"` //发生的原因
 	Time       int64   `json:"time"  msgpack:"time"`
 	Price      float64 `json:"price"  msgpack:"price"` //执行价格
 	PriceSL    float64 `json:"price_sl"  msgpack:"price_sl"`
