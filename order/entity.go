@@ -31,6 +31,11 @@ type ClosePositionRequest struct {
 	Comment string `json:"comment,omitempty"`
 }
 
+// 一键平仓
+type CloseAllPositionsRequest struct {
+	Login uint64 `json:"login"`
+}
+
 // 挂单
 type PlacePendingOrderRequest struct {
 	//required

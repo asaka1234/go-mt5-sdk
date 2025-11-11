@@ -7,10 +7,10 @@ import (
 	"github.com/json-iterator/go"
 )
 
-// 平仓
-func (cli *Client) ClosePosition(req ClosePositionRequest) (*CommonResp, error) {
+// 一键平仓
+func (cli *Client) CloseAllPositions(req CloseAllPositionsRequest) (*CommonResp, error) {
 
-	rawURL := cli.Params.Address + "/v1/position/close"
+	rawURL := cli.Params.Address + "/v1/position/all/close"
 
 	//返回值会放到这里
 	var result CommonResp
@@ -27,7 +27,7 @@ func (cli *Client) ClosePosition(req ClosePositionRequest) (*CommonResp, error) 
 
 	//print log
 	restLog, _ := jsoniter.ConfigCompatibleWithStandardLibrary.Marshal(utils.GetRestyLog(resp))
-	cli.logger.Infof("MT5#ClosePosition#Close->%+v", string(restLog))
+	cli.logger.Infof("MT5#CloseAllPositions#Close->%+v", string(restLog))
 
 	if err != nil {
 		return nil, err
