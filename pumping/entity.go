@@ -123,3 +123,9 @@ type Mt5Deal struct {
 }
 
 //-----------------------------------------------------------------------
+
+type MT5User struct {
+	Login     uint64 `json:"login"  msgpack:"login"`
+	Uid       uint64 `json:"uid"  msgpack:"uid"`               //放在first name里
+	NameSpace string `json:"name_space"  msgpack:"name_space"` //Internal | YuBit
+}

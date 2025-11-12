@@ -136,6 +136,12 @@ func (sm *SubscriptionManager) handleTypedResponse(response *TCPResponse, handle
 			return fmt.Errorf("failed to unmarshal pos payload: %w", err)
 		}
 		payload = posPayload
+	case []MT5User:
+		var userPayload []MT5User
+		if err := jsoniter.Unmarshal(payloadJSON, &userPayload); err != nil {
+			return fmt.Errorf("failed to unmarshal user payload: %w", err)
+		}
+		payload = userPayload
 	case []Mt5Deal:
 		var dealPayload []Mt5Deal
 		if err := jsoniter.Unmarshal(payloadJSON, &dealPayload); err != nil {

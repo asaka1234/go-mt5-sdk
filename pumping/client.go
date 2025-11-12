@@ -201,6 +201,13 @@ func (c *TCPClient) SubscribeDeal() error {
 	return c.SendJSON(req)
 }
 
+func (c *TCPClient) SubscribeUserAdd() error {
+	req := &TCPRequest{
+		Type: string(REQUEST_TYPE_USER_ADD),
+	}
+	return c.SendJSON(req)
+}
+
 func (c *TCPClient) SubscribeOrder() error {
 	req := &TCPRequest{
 		Type: string(REQUEST_TYPE_ORDER),
