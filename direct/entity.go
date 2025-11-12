@@ -122,6 +122,7 @@ type Mt5User struct {
 type BalanceOperationReq struct {
 	Login   uint64  `json:"login,omitempty"`   //mt5的login
 	Balance float64 `json:"balance,omitempty"` //上账多少,支持浮点数和负数
+	Comment string  `json:"comment,omitempty"` //备注(传这边的order id过去)
 }
 
 type BalanceOperationResp struct {
