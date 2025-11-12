@@ -174,6 +174,7 @@ type MTPosition struct {
 	ActivationMode uint    `json:"activation_mode"` //1-sl, 2-tp, 3-so
 	ActivationTime int64   `json:"activation_time"` //unix时间戳(s)
 	TimeCreate     int64   `json:"time_create"`     //unix时间戳(s)
+	Comment        string  `json:"comment"`         //备注
 }
 
 //-----------------------------------------------
@@ -196,6 +197,7 @@ type MTOrder struct {
 	PriceTP      float64 `json:"price_tp"`
 	Volume       float64 `json:"volume"` //lots
 	RateMargin   float64 `json:"rate_margin"`
+	Comment      string  `json:"comment"` //备注
 }
 
 //------------------------------------------------------
