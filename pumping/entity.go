@@ -40,12 +40,13 @@ type MT5StopOut struct {
 //----------------------------------------------------------------------
 
 type MT5Tick struct {
-	Symbol string `json:"symbol"  msgpack:"symbol"`
-	AskE8  int64  `json:"ask_e8" msgpack:"ask_e8"`   //都是扩大了 10e8倍
-	BidE8  int64  `json:"bid_e8" msgpack:"bid_e8"`   //都是扩大了 10e8倍
-	LastE8 int64  `json:"last_e8" msgpack:"last_e8"` //都是扩大了 10e8倍
-	Volume uint64 `json:"volume" msgpack:"volume"`
-	Time   int64  `json:"time" msgpack:"time"` //unix时间戳(ms毫秒)
+	Symbol   string `json:"symbol"  msgpack:"symbol"`
+	Category string `json:"category"  msgpack:"category"` //分组(enum)
+	AskE8    int64  `json:"ask_e8" msgpack:"ask_e8"`      //都是扩大了 10e8倍
+	BidE8    int64  `json:"bid_e8" msgpack:"bid_e8"`      //都是扩大了 10e8倍
+	LastE8   int64  `json:"last_e8" msgpack:"last_e8"`    //都是扩大了 10e8倍
+	Volume   uint64 `json:"volume" msgpack:"volume"`
+	Time     int64  `json:"time" msgpack:"time"` //unix时间戳(ms毫秒)
 }
 
 //-----------------------------------------------------------------------
