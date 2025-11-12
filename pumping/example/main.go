@@ -13,7 +13,7 @@ import (
 func main() {
 	// 创建配置
 	config := &pumping.Config{
-		ServerAddr:        "localhost:8355",
+		ServerAddr:        "10.211.55.9:8355",
 		Timeout:           5 * time.Second,
 		Reconnect:         true,
 		MaxReconnects:     10,

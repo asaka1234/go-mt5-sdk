@@ -26,12 +26,14 @@ type TCPResponse struct {
 
 type MT5MarginCall struct {
 	Login       uint64  `json:"login"  msgpack:"login"`
+	UID         uint64  `json:"uid"  msgpack:"uid"`
 	Equity      float64 `json:"equity"  msgpack:"equity"`             //净值
 	MarginLevel float64 `json:"margin_level"  msgpack:"margin_level"` //保证金率
 }
 
 type MT5StopOut struct {
 	Login    uint64  `json:"login"  msgpack:"login"`
+	UID      uint64  `json:"uid"  msgpack:"uid"`
 	SOLevel  float64 `json:"so_level"  msgpack:"so_level"`
 	SOEquity float64 `json:"so_equity"  msgpack:"so_equity"`
 	SOMargin float64 `json:"so_margin"  msgpack:"so_margin"`
