@@ -69,6 +69,7 @@ type MTOrder struct {
 	PriceTP      float64 `json:"price_tp"  msgpack:"price_tp"`
 	Volume       float64 `json:"volume"  msgpack:"volume"` //lots
 	RateMargin   float64 `json:"rate_margin"  msgpack:"rate_margin"`
+	Comment      string  `json:"comment"  msgpack:"comment"`
 }
 
 //-----------------------------------------------------------------------
@@ -94,6 +95,7 @@ type MTPosition struct {
 	ActivationMode uint    `json:"activation_mode"  msgpack:"activation_mode"` //1-sl, 2-tp, 3-so
 	ActivationTime int64   `json:"activation_time"  msgpack:"activation_time"` //unix时间戳(s)
 	TimeCreate     int64   `json:"time_create"  msgpack:"time_create"`         //unix时间戳(s)
+	Comment        string  `json:"comment"  msgpack:"comment"`
 }
 
 //-----------------------------------------------------------------------
@@ -120,6 +122,7 @@ type Mt5Deal struct {
 	RateMargin float64 `json:"rate_margin"  msgpack:"rate_margin"`
 	RateProfit float64 `json:"rate_profit"  msgpack:"rate_profit"`
 	Storage    float64 `json:"storage"  msgpack:"storage"` //swap
+	Comment    string  `json:"comment"  msgpack:"comment"`
 }
 
 //-----------------------------------------------------------------------
