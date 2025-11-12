@@ -34,6 +34,8 @@ type ClosePositionRequest struct {
 // 一键平仓
 type CloseAllPositionsRequest struct {
 	Login uint64 `json:"login"`
+	//option
+	Comment string `json:"comment,omitempty"`
 }
 
 // 挂单
