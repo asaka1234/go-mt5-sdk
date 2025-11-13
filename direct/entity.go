@@ -48,29 +48,29 @@ type MT5SymbolBase struct {
 	CurrencyMargin      string `json:"currency_margin"` //保证金货币
 	CurrencyMarginDigit uint   `json:"currency_margin_digit"`
 	//-----------交易------------------------
-	ContractSize float64 `json:"contract_size"` //合约量
-	CalcMode     uint    `json:"calc_mode"`     //利润/swap计算
-	TradeMode    uint    `json:"trade_mode"`    //交易模式,比如:long_only https://support.metaquotes.net/en/docs/mt5/api/config_symbol/imtconsymbol/imtconsymbol_enum#entrademode
-	GTCMode      uint    `json:"gtc_mode"`      //直到挂单取消
-	VolumeMin    float64 `json:"volume_min"`    //最小下单手数
-	VolumeMax    float64 `json:"volume_max"`    //最大下单手数
-	VolumeStep   float64 `json:"volume_step"`   //下单步长
+	ContractSize string `json:"contract_size"` //合约量
+	CalcMode     uint   `json:"calc_mode"`     //利润/swap计算
+	TradeMode    uint   `json:"trade_mode"`    //交易模式,比如:long_only https://support.metaquotes.net/en/docs/mt5/api/config_symbol/imtconsymbol/imtconsymbol_enum#entrademode
+	GTCMode      uint   `json:"gtc_mode"`      //直到挂单取消
+	VolumeMin    string `json:"volume_min"`    //最小下单手数
+	VolumeMax    string `json:"volume_max"`    //最大下单手数
+	VolumeStep   string `json:"volume_step"`   //下单步长
 
 	//-----------保证金------------------------
-	MarginInitial      float64 `json:"margin_initial"`       //初始保证金
-	MarginHedged       float64 `json:"margin_hedged"`        //保证金对冲
-	MarginRateCurrency float64 `json:"margin_rate_currency"` //保证金百分比
+	MarginInitial      string `json:"margin_initial"`       //初始保证金
+	MarginHedged       string `json:"margin_hedged"`        //保证金对冲
+	MarginRateCurrency string `json:"margin_rate_currency"` //保证金百分比
 
-	MarginRateInitBuy  float64 `json:"margin_rate_init_buy"`  //percentage初始保证金比例针对buy方向
-	MarginRateInitSell float64 `json:"margin_rate_init_sell"` //percentage针对sell方向
-	MarginRateMainBuy  float64 `json:"margin_rate_main_buy"`  //percentage维持保证金比例针对buy方向
-	MarginRateMainSell float64 `json:"margin_rate_main_sell"` //percentage针对sell方向
+	MarginRateInitBuy  string `json:"margin_rate_init_buy"`  //percentage初始保证金比例针对buy方向
+	MarginRateInitSell string `json:"margin_rate_init_sell"` //percentage针对sell方向
+	MarginRateMainBuy  string `json:"margin_rate_main_buy"`  //percentage维持保证金比例针对buy方向
+	MarginRateMainSell string `json:"margin_rate_main_sell"` //percentage针对sell方向
 
 	//-------------利息----------------------
-	SwapMode  uint    `json:"swap_mode"`  //库存费类型
-	SwapLong  float64 `json:"swap_long"`  //买入库存费
-	SwapShort float64 `json:"swap_short"` //卖出库存费
-	Swap3Day  uint    `json:"swap_3_day"` //3日库存费
+	SwapMode  uint   `json:"swap_mode"`  //库存费类型
+	SwapLong  string `json:"swap_long"`  //买入库存费
+	SwapShort string `json:"swap_short"` //卖出库存费
+	Swap3Day  uint   `json:"swap_3_day"` //3日库存费
 
 	//-------------交易时间----------------------
 	SessionTrade []SessionInfo `json:"session_trade"` //每周七天的一个列表
