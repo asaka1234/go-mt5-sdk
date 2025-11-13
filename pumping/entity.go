@@ -59,19 +59,20 @@ type MTOrderExtra struct {
 }
 
 type MTOrder struct {
-	Login        uint64  `json:"login"  msgpack:"login"`
-	Ticket       uint64  `json:"ticket"  msgpack:"ticket"` //order_id
-	Symbol       string  `json:"symbol"  msgpack:"symbol"`
-	State        uint    `json:"state"  msgpack:"state"`                 //1是挂单  ORDER_STATE_PLACED, 其他是失败
-	TimeSetup    int64   `json:"time_setup"  msgpack:"time_setup"`       //下单时间
-	Type         uint    `json:"type"  msgpack:"type"`                   //0-buy, 1-sell,2-buy limit ,3-sell limit, 4-buy stop, 5-sell stop, 6-buy stop limit, 7-sell stop limit,
-	PriceOrder   float64 `json:"price_order"  msgpack:"price_order"`     //下单价格 (stop/limit的价格)
-	PriceTrigger float64 `json:"price_trigger"  msgpack:"price_trigger"` //触发价格（stop limit 单）
-	PriceSL      float64 `json:"price_sl"  msgpack:"price_sl"`
-	PriceTP      float64 `json:"price_tp"  msgpack:"price_tp"`
-	Volume       float64 `json:"volume"  msgpack:"volume"` //lots
-	RateMargin   float64 `json:"rate_margin"  msgpack:"rate_margin"`
-	Comment      string  `json:"comment"  msgpack:"comment"`
+	Login          uint64  `json:"login"  msgpack:"login"`
+	Ticket         uint64  `json:"ticket"  msgpack:"ticket"` //order_id
+	Symbol         string  `json:"symbol"  msgpack:"symbol"`
+	State          uint    `json:"state"  msgpack:"state"`                 //1是挂单  ORDER_STATE_PLACED, 其他是失败
+	ActivationMode uint    `json:"activation_mode"`                        //激活模式  //0-none, 1=ACTIVATION_PENDING, 2=ACTIVATION_STOPLIMIT,3=ACTIVATION_EXPIRATION,4=ACTIVATION_STOPOUT
+	TimeSetup      int64   `json:"time_setup"  msgpack:"time_setup"`       //下单时间
+	Type           uint    `json:"type"  msgpack:"type"`                   //0-buy, 1-sell,2-buy limit ,3-sell limit, 4-buy stop, 5-sell stop, 6-buy stop limit, 7-sell stop limit,
+	PriceOrder     float64 `json:"price_order"  msgpack:"price_order"`     //下单价格 (stop/limit的价格)
+	PriceTrigger   float64 `json:"price_trigger"  msgpack:"price_trigger"` //触发价格（stop limit 单）
+	PriceSL        float64 `json:"price_sl"  msgpack:"price_sl"`
+	PriceTP        float64 `json:"price_tp"  msgpack:"price_tp"`
+	Volume         float64 `json:"volume"  msgpack:"volume"` //lots
+	RateMargin     float64 `json:"rate_margin"  msgpack:"rate_margin"`
+	Comment        string  `json:"comment"  msgpack:"comment"`
 }
 
 //-----------------------------------------------------------------------
