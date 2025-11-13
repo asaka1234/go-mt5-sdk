@@ -30,14 +30,16 @@ func main() {
 	cli := direct.NewClient(vlog, &direct.InitParams{ADDR})
 	cli.SetDebugModel(true)
 
-	//_, err := cli.ListSymbol()
-	//resp, err := cli.TickReview()
-
+	//1. 开户
 	//req := GenUserCreateReqDemo()
 	//_, err := cli.UserCreate(req)
 
+	//2. 充值/提现
 	req := GenBalanceOperationReqDemo()
 	_, err := cli.BalanceOperation(req)
+
+	//_, err := cli.ListSymbol()
+	//resp, err := cli.TickReview()
 
 	if err != nil {
 		fmt.Printf("err:%s\n", err.Error())
@@ -49,14 +51,15 @@ func main() {
 
 func GenUserCreateReqDemo() direct.UserCreateReq {
 	return direct.UserCreateReq{
-		Uid:      123,
+		Uid:      20251113,
 		Internal: 2,
 	}
 }
 
 func GenBalanceOperationReqDemo() direct.BalanceOperationReq {
 	return direct.BalanceOperationReq{
-		Login:   123450051,
-		Balance: -30,
+		Login:   123450079,
+		Balance: 9000000,
+		Comment: "1234567890#1234567891",
 	}
 }
