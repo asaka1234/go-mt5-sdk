@@ -10,7 +10,7 @@ const (
 	MtRequestTypeBuyLimit  MtRequestType = 2
 	MtRequestTypeSellLimit MtRequestType = 3
 	MtRequestTypeBuyStop   MtRequestType = 4
-	MtRequestTypeStop      MtRequestType = 5
+	MtRequestTypeSellStop  MtRequestType = 5
 )
 
 // -----------------------------
