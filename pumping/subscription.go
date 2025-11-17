@@ -115,46 +115,45 @@ func (sm *SubscriptionManager) handleTypedResponse(response *TCPResponse, handle
 		return fmt.Errorf("failed to marshal payload: %w", err)
 	}
 
-	// 创建payload类型的新实例
 	var payload interface{}
-	switch handler.PayloadType.(type) {
-	case []MT5Tick:
+	switch REQUEST_TYPE(response.Type) {
+	case REQUEST_TYPE_TICK:
 		var tickPayload []MT5Tick
 		if err := jsoniter.Unmarshal(payloadJSON, &tickPayload); err != nil {
 			return fmt.Errorf("failed to unmarshal tick payload: %w", err)
 		}
 		payload = tickPayload
-	case []MTOrderExtra:
+	case REQUEST_TYPE_ORDER:
 		var orderPayload []MTOrderExtra
 		if err := jsoniter.Unmarshal(payloadJSON, &orderPayload); err != nil {
-			return fmt.Errorf("failed to unmarshal order payload: %w", err)
+			return fmt.Errorf("failed to unmarshal tick payload: %w", err)
 		}
 		payload = orderPayload
-	case []MTPositionExtra:
+	case REQUEST_TYPE_POSITION:
 		var posPayload []MTPositionExtra
 		if err := jsoniter.Unmarshal(payloadJSON, &posPayload); err != nil {
 			return fmt.Errorf("failed to unmarshal pos payload: %w", err)
 		}
 		payload = posPayload
-	case []MT5User:
+	case REQUEST_TYPE_USER_ADD:
 		var userPayload []MT5User
 		if err := jsoniter.Unmarshal(payloadJSON, &userPayload); err != nil {
 			return fmt.Errorf("failed to unmarshal user payload: %w", err)
 		}
 		payload = userPayload
-	case []Mt5Deal:
+	case REQUEST_TYPE_DEAL:
 		var dealPayload []Mt5Deal
 		if err := jsoniter.Unmarshal(payloadJSON, &dealPayload); err != nil {
 			return fmt.Errorf("failed to unmarshal deal payload: %w", err)
 		}
 		payload = dealPayload
-	case []MT5MarginCall:
+	case REQUEST_TYPE_MARGINCAL:
 		var margincallPayload []MT5MarginCall
 		if err := jsoniter.Unmarshal(payloadJSON, &margincallPayload); err != nil {
 			return fmt.Errorf("failed to unmarshal margincall payload: %w", err)
 		}
 		payload = margincallPayload
-	case []MT5StopOut:
+	case REQUEST_TYPE_STOPOUT:
 		var soPayload []MT5StopOut
 		if err := jsoniter.Unmarshal(payloadJSON, &soPayload); err != nil {
 			return fmt.Errorf("failed to unmarshal so payload: %w", err)

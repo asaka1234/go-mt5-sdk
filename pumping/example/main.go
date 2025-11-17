@@ -35,20 +35,54 @@ func main() {
 		fmt.Printf("⚠️ Error: %v\n", err)
 	}
 
+	/*
+		// 注册tick消息处理器 - 使用类型化处理器
+		handler.RegisterTypedHandler(pumping.REQUEST_TYPE_TICK, []pumping.MT5Tick{},
+			func(response *pumping.TCPResponse, payload interface{}) error {
+				tickItems := payload.([]pumping.MT5Tick)
+
+				for i, item := range tickItems {
+					tickTime := time.Unix(item.Time, 0)
+
+					fmt.Printf("  [%d] %s - Ask: %d, Bid: %d, Time: %s\n",
+						i+1,
+						item.Symbol,
+						item.AskE8,
+						item.BidE8,
+						tickTime.Format("15:04:05"))
+				}
+				return nil
+			})
+
+
+			// 注册tick消息处理器 - 使用类型化处理器
+			handler.RegisterTypedHandler(pumping.REQUEST_TYPE_ORDER, []pumping.MTOrderExtra{},
+				func(response *pumping.TCPResponse, payload interface{}) error {
+					orderItems := payload.([]pumping.MTOrderExtra)
+
+					for i, item := range orderItems {
+
+						fmt.Printf("  [%d] %s, %d\n",
+							i+1,
+							item.Symbol,
+							item.Ticket)
+					}
+					return nil
+				})
+
+	*/
+
 	// 注册tick消息处理器 - 使用类型化处理器
-	handler.RegisterTypedHandler(pumping.REQUEST_TYPE_TICK, []pumping.MT5Tick{},
+	handler.RegisterTypedHandler(pumping.REQUEST_TYPE_POSITION, []pumping.MTPositionExtra{},
 		func(response *pumping.TCPResponse, payload interface{}) error {
-			tickItems := payload.([]pumping.MT5Tick)
+			orderItems := payload.([]pumping.MTPositionExtra)
 
-			for i, item := range tickItems {
-				tickTime := time.Unix(item.Time, 0)
+			for i, item := range orderItems {
 
-				fmt.Printf("  [%d] %s - Ask: %d, Bid: %d, Time: %s\n",
+				fmt.Printf("position  [%d] %s, %d\n",
 					i+1,
 					item.Symbol,
-					item.AskE8,
-					item.BidE8,
-					tickTime.Format("15:04:05"))
+					item.Ticket)
 			}
 			return nil
 		})
@@ -74,7 +108,9 @@ func main() {
 		time.Sleep(1 * time.Second)
 
 		// 订阅tick数据
-		if err := client.SubscribeTick("XAUUSD,XAGUSD,EURUSD"); err != nil {
+		//if err := client.SubscribeTick("XAUUSD,XAGUSD,EURUSD"); err != nil {
+		//if err := client.SubscribeOrder(); err != nil {
+		if err := client.SubscribePosition(); err != nil {
 			log.Printf("Failed to subscribe to tick: %v", err)
 		} else {
 			fmt.Println("📈 Subscribed to tick data")
