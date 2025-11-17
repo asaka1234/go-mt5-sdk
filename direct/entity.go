@@ -142,15 +142,15 @@ type UserAccountDetailResp struct {
 }
 
 type MTUserAccount struct {
-	Login          uint64  `json:"login"`  //当前要操作的account的login
-	Balance        float64 `json:"symbol"` //余额
-	Margin         float64 `json:"margin"` //已用保证金
-	MarginFree     float64 `json:"margin_free"`
-	MarginLevel    float64 `json:"margin_level"`
-	MarginLeverage uint    `json:"margin_leverage"` //杠杆
-	Equity         float64 `json:"equity"`
-	Storage        float64 `json:"storage"`
-	Floating       float64 `json:"floating"`
+	Login          uint64 `json:"login"`   //当前要操作的account的login
+	Balance        string `json:"balance"` //余额
+	Margin         string `json:"margin"`  //已用保证金
+	MarginFree     string `json:"margin_free"`
+	MarginLevel    string `json:"margin_level"`
+	MarginLeverage uint   `json:"margin_leverage"` //杠杆
+	Equity         string `json:"equity"`
+	Storage        string `json:"storage"`
+	Floating       string `json:"floating"`
 }
 
 //-----------------------------------------------

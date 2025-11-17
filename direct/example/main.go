@@ -30,13 +30,16 @@ func main() {
 	cli := direct.NewClient(vlog, &direct.InitParams{ADDR})
 	cli.SetDebugModel(true)
 
+	//0. 获取symbols
+	resp, err := cli.ListSymbol()
+
 	//1. 开户
 	//req := GenUserCreateReqDemo()
 	//_, err := cli.UserCreate(req)
 
 	//2. 充值/提现
-	req := GenBalanceOperationReqDemo()
-	_, err := cli.BalanceOperation(req)
+	//req := GenBalanceOperationReqDemo()
+	//_, err := cli.BalanceOperation(req)
 
 	//_, err := cli.ListSymbol()
 	//resp, err := cli.TickReview()
@@ -45,7 +48,7 @@ func main() {
 		fmt.Printf("err:%s\n", err.Error())
 		return
 	}
-	//fmt.Printf("resp:%+v\n", resp)
+	fmt.Printf("resp:%+v\n", resp)
 
 }
 
