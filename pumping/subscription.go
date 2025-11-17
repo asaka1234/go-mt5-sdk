@@ -142,7 +142,7 @@ func (sm *SubscriptionManager) handleTypedResponse(response *TCPResponse, handle
 		}
 		payload = userPayload
 	case REQUEST_TYPE_DEAL:
-		var dealPayload []Mt5Deal
+		var dealPayload []Mt5DealExtra
 		if err := jsoniter.Unmarshal(payloadJSON, &dealPayload); err != nil {
 			return fmt.Errorf("failed to unmarshal deal payload: %w", err)
 		}
