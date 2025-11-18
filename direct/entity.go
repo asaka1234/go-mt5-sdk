@@ -4,22 +4,6 @@ type InitParams struct {
 	Address string `json:"address" mapstructure:"address" config:"address" yaml:"address"` // http://ip:port这样的地址
 }
 
-// -----------------------------------
-
-// 普通开仓单
-type OpenPositionRequest struct {
-	//required
-	Login  uint64        `json:"login"` //下单人
-	Lots   float64       `json:"lots"`  // lots手数
-	Symbol string        `json:"symbol"`
-	Type   MtRequestType `json:"type"` // 只支持类型: 0-buy, 1-sell
-
-	//option
-	Comment string  `json:"comment,omitempty"`
-	Sl      float64 `json:"sl,omitempty"`
-	Tp      float64 `json:"tp,omitempty"`
-}
-
 //------------------------------------------------------------------------
 
 type CommonResp struct {
