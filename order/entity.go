@@ -20,6 +20,15 @@ type OpenPositionRequest struct {
 	Tp      string `json:"tp,omitempty"` //float64 (为了避免精度损失)
 }
 
+// 只能修改sl/tp
+type ModifyPositionRequest struct {
+	//required
+	Ticket uint64 `json:"ticket"` //是要修改的 position 的id, 通过它可以拿到: symbol, login, type,
+
+	Sl string `json:"sl,omitempty"` //float64 (为了避免精度损失)
+	Tp string `json:"tp,omitempty"` //float64 (为了避免精度损失)
+}
+
 // 平通平仓单
 type ClosePositionRequest struct {
 	Lots   string `json:"lots,omitempty"` // lots手数  float64
