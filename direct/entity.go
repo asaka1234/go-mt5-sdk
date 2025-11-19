@@ -40,6 +40,9 @@ type MT5SymbolBase struct {
 	VolumeMax    string `json:"volume_max"`    //最大下单手数
 	VolumeStep   string `json:"volume_step"`   //下单步长
 
+	StopsLevel  int `json:"stops_level"`  //sl/tp的价格设置差值
+	FreezeLevel int `json:"freeze_level"` //利润/swap计算
+
 	//-----------保证金------------------------
 	MarginInitial      string `json:"margin_initial"`       //初始保证金
 	MarginHedged       string `json:"margin_hedged"`        //保证金对冲
