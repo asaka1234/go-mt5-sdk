@@ -151,14 +151,14 @@ type MTPosition struct {
 	Ticket         uint64  `json:"ticket"` //position_id
 	Symbol         string  `json:"symbol"`
 	Action         uint    `json:"action"`     // 0-buy, 1-sell
-	PriceOpen      float64 `json:"price_open"` //开仓价
-	PriceSL        float64 `json:"price_sl"`
-	PriceTP        float64 `json:"price_tp"`
+	PriceOpen      string  `json:"price_open"` //开仓价  float64
+	PriceSL        string  `json:"price_sl"`   // float64
+	PriceTP        string  `json:"price_tp"`   // float64
 	RateMargin     float64 `json:"rate_margin"`
 	RateProfit     float64 `json:"rate_profit"`
 	Volume         float64 `json:"volume"` //lots
-	Profit         float64 `json:"profit"`
-	Storage        float64 `json:"storage"`
+	Profit         string  `json:"profit"`
+	Storage        string  `json:"storage"`
 	ActivationMode uint    `json:"activation_mode"` //1-sl, 2-tp, 3-so
 	ActivationTime int64   `json:"activation_time"` //unix时间戳(s)
 	TimeCreate     int64   `json:"time_create"`     //unix时间戳(s)
@@ -180,10 +180,10 @@ type MTOrder struct {
 	ActivationMode uint    `json:"activation_mode"` //激活模式  //0-none, 1=ACTIVATION_PENDING, 2=ACTIVATION_STOPLIMIT,3=ACTIVATION_EXPIRATION,4=ACTIVATION_STOPOUT
 	TimeSetup      int64   `json:"time_setup"`      //下单时间
 	Type           uint    `json:"type"`            //0-buy, 1-sell,2-buy limit ,3-sell limit, 4-buy stop, 5-sell stop, 6-buy stop limit, 7-sell stop limit,
-	PriceOrder     float64 `json:"price_order"`     //下单价格 (stop/limit的价格)
-	PriceTrigger   float64 `json:"price_trigger"`   //触发价格（stop limit 单）
-	PriceSL        float64 `json:"price_sl"`
-	PriceTP        float64 `json:"price_tp"`
+	PriceOrder     string  `json:"price_order"`     //下单价格 (stop/limit的价格)
+	PriceTrigger   string  `json:"price_trigger"`   //触发价格（stop limit 单）
+	PriceSL        string  `json:"price_sl"`
+	PriceTP        string  `json:"price_tp"`
 	Volume         float64 `json:"volume"` //lots
 	RateMargin     float64 `json:"rate_margin"`
 	Comment        string  `json:"comment"` //备注
