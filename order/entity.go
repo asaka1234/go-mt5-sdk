@@ -52,7 +52,7 @@ type PlacePendingOrderRequest struct {
 	Symbol         string        `json:"symbol"`
 	Lots           string        `json:"lots"`             // lots手数 float64
 	Type           MtRequestType `json:"type"`             // 只支持如下6种类型: 2-OP_BUY_LIMIT, 3-OP_SELL_LIMIT, 4-OP_BUY_STOP, 5-OP_SELL_STOP，6-OP_BUY_STOP_LIMIT，7-OP_SELL_STOP_LIMIT
-	Price          float64       `json:"price"`            // 挂单的价格(手动指定的)
+	Price          string        `json:"price"`            // 挂单的价格(手动指定的)
 	ExpireTimeType MtOrderTime   `json:"expire_time_type"` // 不传默认gtc
 
 	//option

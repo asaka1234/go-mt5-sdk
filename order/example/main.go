@@ -89,7 +89,7 @@ func GenPlacePendingOrderRequestDemo() order.PlacePendingOrderRequest {
 		Lots:    "0.5",
 		Symbol:  "XAUUSD.s",
 		Type:    3, // 2-OP_BUY_LIMIT, 3-OP_SELL_LIMIT, 4-OP_BUY_STOP, 5-OP_SELL_STOP，6-OP_BUY_STOP_LIMIT，7-OP_SELL_STOP_LIMIT
-		Price:   4237.1,
+		Price:   "4237.1",
 		Comment: "GenPlacePendingOrderRequestDemo",
 	}
 }
