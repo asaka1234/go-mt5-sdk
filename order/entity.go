@@ -45,6 +45,13 @@ type CloseAllPositionsRequest struct {
 	Comment string `json:"comment,omitempty"`
 }
 
+type RemoveAllPendingOrdersRequest struct {
+	Login uint64 `json:"login"`
+	//option
+	Symbol  string `json:"symbol,omitempty"` //指定的话就只关掉这个symbol的所有挂单
+	Comment string `json:"comment,omitempty"`
+}
+
 // 挂单
 type PlacePendingOrderRequest struct {
 	//required
@@ -69,7 +76,7 @@ type PlacePendingOrderRequest struct {
 // type类型、volume 和 symbol等禁止修改. 只能修改price、time和comment
 type ModifyPendingOrderRequest struct {
 	//required
-	Ticket int `json:"ticket"` //是要修改的 order 的id, 通过它可以拿到: symbol, login, type,
+	Ticket uint64 `json:"ticket"` //是要修改的 order 的id, 通过它可以拿到: symbol, login, type,
 
 	//option
 	Price        string `json:"price"`         //float64     // 新的价格 (不改就还是以前的价格)
@@ -88,7 +95,7 @@ type ModifyPendingOrderRequest struct {
 // type类型、volume 和 symbol等禁止修改. 只能修改price、time和comment
 type RemovePendingOrderRequest struct {
 	//required
-	Ticket int `json:"ticket"` //是要删掉的 order 的id, 通过它可以拿到: symbol, login, type等信息
+	Ticket uint64 `json:"ticket"` //是要删掉的 order 的id, 通过它可以拿到: symbol, login, type等信息
 
 	//option
 	Comment string `json:"comment,omitempty"` //该modify操作的备注

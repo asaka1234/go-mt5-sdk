@@ -27,7 +27,7 @@ func (cli *Client) CloseAllPositions(req CloseAllPositionsRequest) (*CommonResp,
 
 	//print log
 	restLog, _ := jsoniter.ConfigCompatibleWithStandardLibrary.Marshal(utils.GetRestyLog(resp))
-	cli.logger.Infof("MT5#CloseAllPositions#Close->%+v", string(restLog))
+	cli.logger.Infof("MT5#CloseAllPositions->%+v", string(restLog))
 
 	if err != nil {
 		return nil, err

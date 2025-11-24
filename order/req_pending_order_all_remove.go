@@ -7,10 +7,9 @@ import (
 	"github.com/json-iterator/go"
 )
 
-// 开仓
-func (cli *Client) OpenPosition(req OpenPositionRequest) (*CommonResp, error) {
+func (cli *Client) RemoveAllPendingOrders(req RemoveAllPendingOrdersRequest) (*CommonResp, error) {
 
-	rawURL := cli.Params.Address + "/v1/position/open"
+	rawURL := cli.Params.Address + "/v1/pending/order/all/remove"
 
 	//返回值会放到这里
 	var result CommonResp
@@ -27,7 +26,7 @@ func (cli *Client) OpenPosition(req OpenPositionRequest) (*CommonResp, error) {
 
 	//print log
 	restLog, _ := jsoniter.ConfigCompatibleWithStandardLibrary.Marshal(utils.GetRestyLog(resp))
-	cli.logger.Infof("MT5#OpenPosition->%+v", string(restLog))
+	cli.logger.Infof("MT5#RemoveAllPendingOrders->%+v", string(restLog))
 
 	if err != nil {
 		return nil, err
