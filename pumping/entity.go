@@ -109,23 +109,24 @@ type Mt5DealExtra struct {
 }
 
 type Mt5Deal struct {
-	DealId     uint64  `json:"deal_id"  msgpack:"deal_id"`
-	PositionId uint64  `json:"position_id"  msgpack:"position_id"`
-	Symbol     string  `json:"symbol"  msgpack:"symbol"`
-	Login      uint64  `json:"login"  msgpack:"login"`
-	Volume     float64 `json:"volume"  msgpack:"volume"`
-	Entry      int     `json:"entry"  msgpack:"entry"`   //0-ENTRY_IN 开仓, 1-ENTRY_OUT 平仓
-	Action     int     `json:"action"  msgpack:"action"` //
-	Reason     uint    `json:"reason"  msgpack:"reason"` //发生的原因
-	Time       int64   `json:"time"  msgpack:"time"`
-	Price      float64 `json:"price"  msgpack:"price"` //执行价格
-	PriceSL    float64 `json:"price_sl"  msgpack:"price_sl"`
-	PriceTP    float64 `json:"price_tp"  msgpack:"price_tp"`
-	Profit     float64 `json:"profit"  msgpack:"profit"` //profit
-	RateMargin float64 `json:"rate_margin"  msgpack:"rate_margin"`
-	RateProfit float64 `json:"rate_profit"  msgpack:"rate_profit"`
-	Storage    float64 `json:"storage"  msgpack:"storage"` //swap
-	Comment    string  `json:"comment"  msgpack:"comment"`
+	DealId        uint64  `json:"deal_id"  msgpack:"deal_id"`
+	PositionId    uint64  `json:"position_id"  msgpack:"position_id"`
+	Symbol        string  `json:"symbol"  msgpack:"symbol"`
+	Login         uint64  `json:"login"  msgpack:"login"`
+	Volume        float64 `json:"volume"  msgpack:"volume"`
+	Entry         int     `json:"entry"  msgpack:"entry"`   //0-ENTRY_IN 开仓, 1-ENTRY_OUT 平仓
+	Action        int     `json:"action"  msgpack:"action"` //
+	Reason        uint    `json:"reason"  msgpack:"reason"` //发生的原因
+	Time          int64   `json:"time"  msgpack:"time"`
+	Price         float64 `json:"price"  msgpack:"price"`                   //执行价格
+	PricePosition float64 `json:"price_position"  msgpack:"price_position"` //持仓价格, 只有平仓时才有效
+	PriceSL       float64 `json:"price_sl"  msgpack:"price_sl"`
+	PriceTP       float64 `json:"price_tp"  msgpack:"price_tp"`
+	Profit        float64 `json:"profit"  msgpack:"profit"` //profit
+	RateMargin    float64 `json:"rate_margin"  msgpack:"rate_margin"`
+	RateProfit    float64 `json:"rate_profit"  msgpack:"rate_profit"`
+	Storage       float64 `json:"storage"  msgpack:"storage"` //swap
+	Comment       string  `json:"comment"  msgpack:"comment"`
 }
 
 //-----------------------------------------------------------------------
