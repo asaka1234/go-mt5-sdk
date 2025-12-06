@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"github.com/asaka1234/go-mt5-sdk/pumping"
 	"log"
+	"net/http"
+	_ "net/http/pprof"
 	"os"
 	"os/signal"
 	"syscall"
@@ -13,14 +15,18 @@ import (
 func main() {
 	// 创建配置
 	config := &pumping.Config{
-		ServerAddr:        "10.211.55.9:8355",
+		ServerAddr:        "127.0.0.1:8355",
 		Timeout:           5 * time.Second,
 		Reconnect:         true,
 		MaxReconnects:     10,
-		ReconnectInterval: 3 * time.Second,
+		ReconnectInterval: 60 * time.Second,
 		HeartbeatInterval: 20 * time.Second,
 		BufferSize:        1024,
 	}
+
+	go func() {
+		log.Fatalln(http.ListenAndServe(":6060", nil))
+	}()
 
 	// 创建支持订阅的消息处理器
 	handler := pumping.NewSubscriptionMessageHandler()
@@ -28,9 +34,11 @@ func main() {
 	handler.OnConnectedFunc = func() {
 		fmt.Println("✅ Connected to server!")
 	}
+
 	handler.OnDisconnectedFunc = func() {
 		fmt.Println("❌ Disconnected from server!")
 	}
+
 	handler.OnErrorFunc = func(err error) {
 		fmt.Printf("⚠️ Error: %v\n", err)
 	}
@@ -96,26 +104,13 @@ func main() {
 	//-------------------------------------------------------------------
 
 	// 创建客户端
-	client := pumping.NewTCPClient(config, handler)
+	client := pumping.NewTCPClient(config, handler, nil)
+	client.SetSubscribePosition()
 
 	// 连接服务器
 	if err := client.Connect(); err != nil {
 		log.Fatalf("Failed to connect: %v", err)
 	}
-
-	// 等待连接建立后发送请求
-	go func() {
-		time.Sleep(1 * time.Second)
-
-		// 订阅tick数据
-		//if err := client.SubscribeTick("XAUUSD,XAGUSD,EURUSD"); err != nil {
-		//if err := client.SubscribeOrder(); err != nil {
-		if err := client.SubscribePosition(); err != nil {
-			log.Printf("Failed to subscribe to tick: %v", err)
-		} else {
-			fmt.Println("📈 Subscribed to tick data")
-		}
-	}()
 
 	// 等待中断信号
 	sigCh := make(chan os.Signal, 1)
